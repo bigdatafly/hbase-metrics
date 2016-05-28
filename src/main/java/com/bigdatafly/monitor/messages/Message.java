@@ -9,4 +9,7 @@ package com.bigdatafly.monitor.messages;
  */
 public interface Message {
 
+	Object getSource();
+	
+	Object getTarget();
 }

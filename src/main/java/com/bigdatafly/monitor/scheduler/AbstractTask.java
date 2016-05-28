@@ -5,6 +5,9 @@ package com.bigdatafly.monitor.scheduler;
 
 import java.util.concurrent.CountDownLatch;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.bigdatafly.monitor.messages.Message;
 import com.bigdatafly.monitor.serialization.Serializer;
 import com.bigdatafly.monitor.serialization.StringSerializer;
@@ -16,6 +19,7 @@ import com.google.common.base.Preconditions;
  */
 public abstract class AbstractTask implements Task {
 
+	private static final Logger logger = LoggerFactory.getLogger(AbstractTask.class);
 	private State state;
 	private int interval;
 	private final static int DEFAULT_INTREVAL = 60*1000;
@@ -70,7 +74,7 @@ public abstract class AbstractTask implements Task {
 		if(!this.started)
 			throw new RuntimeException();
 		
-		while(true){
+		while(!stop||!Thread.currentThread().isInterrupted()){
 			this.state = State.RUNNING;
 			if(stop)
 				break;
@@ -78,8 +82,9 @@ public abstract class AbstractTask implements Task {
 			try {
 				Thread.sleep(interval);
 			} catch (InterruptedException e) {
-				
-				e.printStackTrace();
+				if(logger.isDebugEnabled())
+					logger.debug("InterruptedException:",e);
+				stop = true;
 				this.state = State.STOP;
 				break;
 			}
@@ -104,7 +109,7 @@ public abstract class AbstractTask implements Task {
 	@Override
 	public Task setInterval(int interval){
 		
-		this.interval = ((interval>100)?interval:DEFAULT_INTREVAL);
+		this.interval = ((interval>1)?interval:DEFAULT_INTREVAL);
 		return this;
 	}
 

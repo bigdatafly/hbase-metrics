@@ -11,7 +11,21 @@
   </properties>
   
   <dependencies>
+  	<!-- http://mvnrepository.com/artifact/com.google.code.gson/gson -->
+	<dependency>
+	    <groupId>com.google.code.gson</groupId>
+	    <artifactId>gson</artifactId>
+	    <version>2.6.2</version>
+	</dependency>
+  
   	<!-- http://mvnrepository.com/artifact/org.apache.hbase/hbase -->
+  	<dependency>
+	    <groupId>jdk.tools</groupId>
+	    <artifactId>jdk.tools</artifactId>
+	    <version>1.7</version>
+	    <scope>system</scope>
+	    <systemPath>${JAVA_HOME}/lib/tools.jar</systemPath>
+	</dependency>
   	<!-- http://mvnrepository.com/artifact/org.apache.hbase/hbase-server -->
 	<dependency>
 	    <groupId>org.apache.hbase</groupId>

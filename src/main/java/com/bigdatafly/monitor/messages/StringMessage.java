@@ -27,6 +27,18 @@ public class StringMessage implements Message{
 	public void setBody(String body) {
 		this.body = body;
 	}
+
+	@Override
+	public Object getSource() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object getTarget() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 	
 }
