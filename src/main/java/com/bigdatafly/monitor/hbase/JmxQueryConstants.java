@@ -7,7 +7,7 @@ package com.bigdatafly.monitor.hbase;
  * @author summer
  *
  */
-public class UrlConstants {
+public class JmxQueryConstants {
 
 	public static final String URL_MASTER_BALANCER = "Hadoop:service=HBase,name=Master,sub=Balancer";
 	

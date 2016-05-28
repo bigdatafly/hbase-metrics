@@ -54,6 +54,11 @@ public class HbaseJmxQuery {
 		return regionServerUrl;
 	}
 
+	public static String getRegionServerJmxQuery(String oldJmxQuery,String regionServer){
+		
+		return oldJmxQuery.replace(REGION_SERVER_DELIMITER, regionServer);
+	}
+	
 	public String getMaster() {
 		
 		return this.master;

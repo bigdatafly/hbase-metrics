@@ -10,6 +10,7 @@ import java.util.List;
 import org.springframework.util.StringUtils;
 
 import com.bigdatafly.monitor.exception.PageNotFoundException;
+import com.bigdatafly.monitor.http.HbaseJmxQuery;
 import com.bigdatafly.monitor.messages.Message;
 import com.bigdatafly.monitor.serialization.Deserializer;
 
@@ -51,9 +52,9 @@ public class RegionServerHttpTask extends AbstractHttpTask{
 		synchronized(cli){
 			size = cli.size();
 			while(curr<size){
-				this.url = cli.get(curr++);
+				String url = getRegionServerJmxQuery(this.url, cli.get(curr++));
 				try{
-					html = fetcher.fetcher(this.url);
+					html = fetcher.fetcher(url);
 					if(!StringUtils.isEmpty(html))
 						break;
 				}catch(PageNotFoundException ex){
@@ -65,6 +66,11 @@ public class RegionServerHttpTask extends AbstractHttpTask{
 		}
 		
 		return html;
+	}
+	
+	private String getRegionServerJmxQuery(final String url,final String regionServer){
+		
+		return HbaseJmxQuery.getRegionServerJmxQuery(url, regionServer);
 	}
 
 }

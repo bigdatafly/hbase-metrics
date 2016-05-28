@@ -3,10 +3,8 @@
  */
 package com.bigdatafly.monitor.messages;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.util.StringUtils;
+import com.bigdatafly.monitor.hbase.model.Beans;
+import com.bigdatafly.utils.JsonUtils;
 
 /**
  * @author summer
@@ -14,12 +12,9 @@ import org.springframework.util.StringUtils;
  */
 public class MessageParser {
 
-	public static List<String> regionServerParse(final String msg){
-		List<String> rs = new ArrayList<String>();
-		if(StringUtils.hasText(msg) && msg.indexOf("tag.liveRegionServers")>0){
-			
-		}
-		return rs;
+	public static Beans JmxMessageParser(final String json){
+		
+		return JsonUtils.fromJson(json, Beans.class);
 	}
 
 	

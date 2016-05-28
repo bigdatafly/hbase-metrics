@@ -7,6 +7,7 @@ package com.bigdatafly.monitor.hbase.model;
  * @author summer
  *
  */
+@Deprecated
 public class RegionServer implements java.io.Serializable{
 
 	/**

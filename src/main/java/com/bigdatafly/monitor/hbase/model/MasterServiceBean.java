@@ -7,6 +7,7 @@ package com.bigdatafly.monitor.hbase.model;
  * @author summer
  *
  */
+@Deprecated
 public class MasterServiceBean implements java.io.Serializable{
 
 	/**

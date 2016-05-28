@@ -9,7 +9,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,8 +41,9 @@ public class SchedulerManager {
 		
 		if(!started){
 			String masterQuery  = this.hbaseJmxQuery.getMasterJmxQuery();
-			Task task = createMasterTask(masterQuery);
-			registry(masterQuery,task);
+			registry(masterQuery,createMasterTask(masterQuery));
+			String regionServerJmxQuery = this.hbaseJmxQuery.getRegionServerJmxQuery();
+			registry(regionServerJmxQuery,createRegionServerTask(regionServerJmxQuery));
 			started = true;
 			if(logger.isDebugEnabled())
 				logger.debug("{debug} master "+this.master+" will be started");
@@ -51,10 +51,33 @@ public class SchedulerManager {
 			throw new HbaseMonitorException("Scheduler already was started");
 	}
 	
-	private Task createMasterTask(String masterQuery){
+	private Task createRegionServerTask(String regionServerJmxQuery){
+		
+		Task task = builder
+				.isMasterTask(false)
+				.setUrl(regionServerJmxQuery)
+				.setCallback(new MasterCallback(this))
+				.setServers(regionServerList)
+				.setSerializer(new StringDeserializer())
+				.setInterval(requency)
+				.setHandler(new Handler(){
+					@Override
+					public <T extends Message> void handler(T msg) {
+						if(msg instanceof StringMessage){
+							StringMessage stringMsg = (StringMessage)msg;
+							//String body = stringMsg.getBody();
+							logger.debug(stringMsg.toString());
+						}						
+					}					
+				})
+				.create();
+		return task;
+	}
+	
+	private Task createMasterTask(String masterJmxQuery){
 		Task task = builder
 				.isMasterTask(true)
-				.setUrl(masterQuery)
+				.setUrl(masterJmxQuery)
 				.setCallback(new MasterCallback(this))
 				.setServers(regionServerList)
 				.setSerializer(new StringDeserializer())
@@ -132,11 +155,7 @@ public class SchedulerManager {
 				
 			}
 		}
-	}
-	
-	public void shutdown(){
 		
-		executor.shutdown();
 		/*
 		try {
 			executor.awaitTermination(1000, TimeUnit.SECONDS);
@@ -145,6 +164,11 @@ public class SchedulerManager {
 			if(logger.isDebugEnabled())
 				logger.debug("InterruptedException:",e);
 		}*/
+	}
+	
+	public void shutdown(){
+		
+		executor.shutdown();
 		started = false;
 		
 	}
