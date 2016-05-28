@@ -32,7 +32,7 @@ public class HbaseMonitorConfiguration {
 	public Integer getFrequency(){
 		
 		return conf.getInteger(ConfigurationConstants.FETCHER_INTERVAL_KEY, 
-				ConfigurationConstants.DEFAULT_FETCHER_INTERVAL)*1000;
+				ConfigurationConstants.DEFAULT_FETCHER_INTERVAL);
 	}
 	
 	public Integer getMasterJmxPort(){

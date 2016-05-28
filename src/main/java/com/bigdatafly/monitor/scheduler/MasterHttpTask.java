@@ -4,7 +4,7 @@
 package com.bigdatafly.monitor.scheduler;
 
 import com.bigdatafly.monitor.messages.Message;
-import com.bigdatafly.monitor.serialization.Serializer;
+import com.bigdatafly.monitor.serialization.Deserializer;
 
 /**
  * @author summer
@@ -17,13 +17,13 @@ public class MasterHttpTask extends AbstractHttpTask{
 		// TODO Auto-generated constructor stub
 	}
 
-	public MasterHttpTask(String url, Serializer<? extends Message> serializer,
+	public MasterHttpTask(String url, Deserializer<? extends Message> serializer,
 			Handler handler, Callback callback) {
 		super(url, serializer, handler, callback);
 		// TODO Auto-generated constructor stub
 	}
 
-	public MasterHttpTask(String url, Serializer<? extends Message> serializer,
+	public MasterHttpTask(String url, Deserializer<? extends Message> serializer,
 			Handler handler) {
 		super(url, serializer, handler);
 		// TODO Auto-generated constructor stub

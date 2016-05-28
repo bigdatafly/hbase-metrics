@@ -3,9 +3,9 @@
  */
 package com.bigdatafly.monitor.scheduler;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,7 +19,7 @@ import com.bigdatafly.monitor.exception.HbaseMonitorException;
 import com.bigdatafly.monitor.http.HbaseJmxQuery;
 import com.bigdatafly.monitor.messages.Message;
 import com.bigdatafly.monitor.messages.StringMessage;
-import com.bigdatafly.monitor.serialization.StringSerializer;
+import com.bigdatafly.monitor.serialization.StringDeserializer;
 
 /**
  * @author summer
@@ -29,7 +29,7 @@ public class SchedulerManager {
 
 	private static final Logger logger = LoggerFactory.getLogger(SchedulerManager.class);
 	private static final Map<String,Task> tasks = new ConcurrentHashMap<String,Task>();
-	public static List<String> regionServerList = new ArrayList<String>();
+	public static Set<String> regionServerList = new HashSet<String>();
 	//private HbaseMonitorConfiguration config;
 	private HbaseJmxQuery hbaseJmxQuery;
 	private String master;
@@ -42,7 +42,7 @@ public class SchedulerManager {
 		
 		if(!started){
 			String masterQuery  = this.hbaseJmxQuery.getMasterJmxQuery();
-			Task task = createMasterTask();
+			Task task = createMasterTask(masterQuery);
 			registry(masterQuery,task);
 			started = true;
 			if(logger.isDebugEnabled())
@@ -51,18 +51,21 @@ public class SchedulerManager {
 			throw new HbaseMonitorException("Scheduler already was started");
 	}
 	
-	private Task createMasterTask(){
+	private Task createMasterTask(String masterQuery){
 		Task task = builder
 				.isMasterTask(true)
-				.setCallback(new MasterCallback())
+				.setUrl(masterQuery)
+				.setCallback(new MasterCallback(this))
 				.setServers(regionServerList)
-				.setSerializer(new StringSerializer())
+				.setSerializer(new StringDeserializer())
 				.setInterval(requency)
 				.setHandler(new Handler(){
 					@Override
 					public <T extends Message> void handler(T msg) {
 						if(msg instanceof StringMessage){
-							
+							StringMessage stringMsg = (StringMessage)msg;
+							//String body = stringMsg.getBody();
+							logger.debug(stringMsg.toString());
 						}						
 					}					
 				})
@@ -118,16 +121,30 @@ public class SchedulerManager {
 		regionServerList.remove(url);
 	}
 	
+	public void await(){
+		
+		while(true){
+			if(executor.isShutdown())
+				break;
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				
+			}
+		}
+	}
+	
 	public void shutdown(){
 		
 		executor.shutdown();
+		/*
 		try {
 			executor.awaitTermination(1000, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
 			
 			if(logger.isDebugEnabled())
 				logger.debug("InterruptedException:",e);
-		}
+		}*/
 		started = false;
 		
 	}

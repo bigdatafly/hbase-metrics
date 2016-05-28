@@ -4,7 +4,7 @@
 package com.bigdatafly.monitor.scheduler;
 
 import com.bigdatafly.monitor.messages.Message;
-import com.bigdatafly.monitor.serialization.Serializer;
+import com.bigdatafly.monitor.serialization.Deserializer;
 
 /**
  * @author summer
@@ -20,7 +20,7 @@ public interface Task extends Runnable{
 	
 	public Task setInterval(int interval);
 	
-	public Task setSerializer(Serializer<? extends Message> serializer );
+	public Task setDeserializer(Deserializer<? extends Message> serializer );
 
 	public void stop();
 

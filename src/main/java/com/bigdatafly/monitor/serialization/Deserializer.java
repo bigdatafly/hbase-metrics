@@ -9,7 +9,7 @@ import com.bigdatafly.monitor.messages.Message;
  * @author summer
  *
  */
-public interface Serializer<T extends Message> {
+public interface Deserializer<T extends Message> {
 
-	public T serialize(String message); 
+	public T deserialize(Object source,Object target,String body); 
 }

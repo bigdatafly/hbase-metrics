@@ -3,13 +3,13 @@
  */
 package com.bigdatafly.monitor.scheduler;
 
-import java.util.List;
+import java.util.Set;
 
 import org.springframework.util.StringUtils;
 
 import com.bigdatafly.monitor.http.Fetcher;
 import com.bigdatafly.monitor.messages.Message;
-import com.bigdatafly.monitor.serialization.Serializer;
+import com.bigdatafly.monitor.serialization.Deserializer;
 /**
  * @author summer
  *
@@ -18,7 +18,7 @@ public abstract class AbstractHttpTask extends AbstractTask implements Task{
 
 	protected String url;
 	protected Fetcher fetcher;
-	protected List<String> servers;
+	protected Set<String> servers;
 	protected Object lock = new Object();
 	
 	public AbstractHttpTask(String url){
@@ -32,13 +32,13 @@ public abstract class AbstractHttpTask extends AbstractTask implements Task{
 		
 	}
 
-	public AbstractHttpTask(String url,Serializer<? extends Message> serializer,Handler handler) {
-		this(url,serializer,handler,null);
+	public AbstractHttpTask(String url,Deserializer<? extends Message> deserializer,Handler handler) {
+		this(url,deserializer,handler,null);
 		
 	}
 	
-	public AbstractHttpTask(String url,Serializer<? extends Message> serializer,Handler handler, Callback callback) {
-		super(serializer, handler ,callback);
+	public AbstractHttpTask(String url,Deserializer<? extends Message> deserializer,Handler handler, Callback callback) {
+		super(deserializer, handler ,callback);
 		this.url = url;
 	}
 
@@ -59,18 +59,18 @@ public abstract class AbstractHttpTask extends AbstractTask implements Task{
 	protected Message poll() throws Exception {
 		
 		String html = getHtml();
-		if(this.serializer!=null && !StringUtils.isEmpty(html))
-			return serializer.serialize(html);
+		if(this.deserializer!=null && !StringUtils.isEmpty(html))
+			return deserializer.deserialize(this.url,this,html);
 		return null;
 	}
 	
 	protected abstract String getHtml() throws Exception;
 	
-	public List<String> getServers() {
+	public Set<String> getServers() {
 		return servers;
 	}
 
-	public void setServers(List<String> servers) {
+	public void setServers(Set<String> servers) {
 		this.servers = servers;
 	}
 

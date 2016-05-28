@@ -15,7 +15,7 @@ public class ConfigurationConstants {
 	
 	public static final String FETCHER_INTERVAL_KEY = "fetcher.interval";
 	
-	public static final int DEFAULT_FETCHER_INTERVAL = 60*1000;
+	public static final int DEFAULT_FETCHER_INTERVAL = 60;//(s)
 	
 	public static final String MASTER_JMX_PORT_KEY = "master.jmx.port";
 	

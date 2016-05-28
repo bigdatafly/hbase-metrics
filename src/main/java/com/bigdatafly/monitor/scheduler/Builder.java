@@ -3,10 +3,11 @@
  */
 package com.bigdatafly.monitor.scheduler;
 
-import java.util.List;
+
+import java.util.Set;
 
 import com.bigdatafly.monitor.messages.Message;
-import com.bigdatafly.monitor.serialization.Serializer;
+import com.bigdatafly.monitor.serialization.Deserializer;
 
 /**
  * @author summer
@@ -15,10 +16,10 @@ import com.bigdatafly.monitor.serialization.Serializer;
 public class Builder{
 	
 	private Handler handler;
-	private Serializer<? extends Message> serializer;
+	private Deserializer<? extends Message> deserializer;
 	private Callback callback;
 	private String url;
-	private List<String> servers;
+	private Set<String> servers;
 	private int interval;
 	private boolean masterTask;
 	
@@ -38,7 +39,7 @@ public class Builder{
 		return this;
 	}
 	
-	public Builder setServers(List<String> servers) {
+	public Builder setServers(Set<String> servers) {
 		this.servers = servers;
 		return this;
 	}
@@ -53,8 +54,8 @@ public class Builder{
 		return this;
 	}
 	
-	public Builder setSerializer(Serializer<? extends Message> serializer) {
-		this.serializer = serializer;
+	public Builder setSerializer(Deserializer<? extends Message> deserializer) {
+		this.deserializer = deserializer;
 		return this;
 	}
 
@@ -71,9 +72,9 @@ public class Builder{
 	public Task create(){
 		AbstractHttpTask task ;
 		if(masterTask){
-			task = new MasterHttpTask(url,serializer,handler,callback);
+			task = new MasterHttpTask(url,deserializer,handler,callback);
 		}else{
-			task = new RegionServerHttpTask(url,serializer,handler,callback);
+			task = new RegionServerHttpTask(url,deserializer,handler,callback);
 		}
 		task.setServers(servers);
 		task.setInterval(interval);

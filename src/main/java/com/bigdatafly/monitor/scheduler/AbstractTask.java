@@ -9,8 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bigdatafly.monitor.messages.Message;
-import com.bigdatafly.monitor.serialization.Serializer;
-import com.bigdatafly.monitor.serialization.StringSerializer;
+import com.bigdatafly.monitor.serialization.Deserializer;
+import com.bigdatafly.monitor.serialization.StringDeserializer;
 import com.google.common.base.Preconditions;
 
 /**
@@ -28,7 +28,7 @@ public abstract class AbstractTask implements Task {
 	private boolean started = false;
 
 	protected Handler handler;
-	protected Serializer<? extends Message> serializer;
+	protected Deserializer<? extends Message> deserializer;
 	protected Callback callback;
 	
 	public AbstractTask(){
@@ -42,15 +42,16 @@ public abstract class AbstractTask implements Task {
 	}
 	
 	
-	public AbstractTask(Serializer<? extends Message> serializer,Handler handler){
+	public AbstractTask(Deserializer<? extends Message> serializer,Handler handler){
 		
 		this(serializer,handler,null);
 	}
 	
-	public AbstractTask(Serializer<? extends Message> serializer,Handler handler,Callback callback){
+	public AbstractTask(Deserializer<? extends Message> serializer,Handler handler,Callback callback){
 		
 		this.callback = ((this.callback == null)?new DefaultCallback():this.callback);
-		this.serializer = ((this.serializer == null)?new StringSerializer():this.serializer);
+		this.deserializer = ((this.deserializer == null)?new StringDeserializer():this.deserializer);
+		
 		Preconditions.checkArgument(handler!=null,"message handler must not be null!");
 		this.handler = handler;
 		
@@ -78,9 +79,9 @@ public abstract class AbstractTask implements Task {
 			this.state = State.RUNNING;
 			if(stop)
 				break;
-			this.execute();
 			try {
-				Thread.sleep(interval);
+				this.execute();
+				Thread.sleep(interval*1000);
 			} catch (InterruptedException e) {
 				if(logger.isDebugEnabled())
 					logger.debug("InterruptedException:",e);
@@ -109,7 +110,7 @@ public abstract class AbstractTask implements Task {
 	@Override
 	public Task setInterval(int interval){
 		
-		this.interval = ((interval>1)?interval:DEFAULT_INTREVAL);
+		this.interval = ((interval>0)?interval:DEFAULT_INTREVAL);
 		return this;
 	}
 
@@ -137,8 +138,8 @@ public abstract class AbstractTask implements Task {
 	}
 
 	@Override
-	public Task setSerializer(Serializer<? extends Message> serializer) {
-		this.serializer = serializer;
+	public Task setDeserializer(Deserializer<? extends Message> deserializer) {
+		this.deserializer = deserializer;
 		return this;
 	}
 
@@ -154,6 +155,9 @@ public abstract class AbstractTask implements Task {
 	public synchronized void waitFor() {
 		
 		try {
+			/**
+			 * 好像然并卵 直接走异常了
+			 */
 			latch.await();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
