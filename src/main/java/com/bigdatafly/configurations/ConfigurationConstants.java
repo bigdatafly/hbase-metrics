@@ -9,7 +9,7 @@ package com.bigdatafly.configurations;
  */
 public class ConfigurationConstants {
 
-	public static final String PROPERTY_FILE = "/hbase.properties";
+	public static final String PROPERTY_FILE = "hbase.properties";
 	
 	public static final String MASTER_KEY = "master";
 	

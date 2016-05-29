@@ -22,7 +22,7 @@ public abstract class AbstractTask implements Task {
 	private static final Logger logger = LoggerFactory.getLogger(AbstractTask.class);
 	private State state;
 	private int interval;
-	private final static int DEFAULT_INTREVAL = 60*1000;
+	private final static int DEFAULT_INTREVAL = 60;
 	private volatile boolean stop;
 	private CountDownLatch latch;
 	private boolean started = false;
@@ -42,16 +42,16 @@ public abstract class AbstractTask implements Task {
 	}
 	
 	
-	public AbstractTask(Deserializer<? extends Message> serializer,Handler handler){
+	public AbstractTask(Deserializer<? extends Message> deserializer,Handler handler){
 		
-		this(serializer,handler,null);
+		this(deserializer,handler,null);
 	}
 	
-	public AbstractTask(Deserializer<? extends Message> serializer,Handler handler,Callback callback){
+	public AbstractTask(Deserializer<? extends Message> deserializer,Handler handler,Callback callback){
 		
-		this.callback = ((this.callback == null)?new DefaultCallback():this.callback);
-		this.deserializer = ((this.deserializer == null)?new StringDeserializer():this.deserializer);
-		
+		this.callback = ((callback == null)?new DefaultCallback():callback);
+		this.deserializer = ((deserializer == null)?new StringDeserializer():deserializer);
+		this.interval = DEFAULT_INTREVAL;
 		Preconditions.checkArgument(handler!=null,"message handler must not be null!");
 		this.handler = handler;
 		
@@ -61,7 +61,6 @@ public abstract class AbstractTask implements Task {
 	public void start() {
 		
 		this.stop = false;
-		this.interval = DEFAULT_INTREVAL;
 		this.state = State.START;
 		this.latch = new CountDownLatch(1);
 		this.started = true;

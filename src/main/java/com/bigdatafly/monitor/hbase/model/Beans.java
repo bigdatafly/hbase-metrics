@@ -37,13 +37,13 @@ public class Beans implements java.io.Serializable{
 	 */
 	private static final long serialVersionUID = 8155825278650454988L;
 	
-	List<Map<String,String>> beans;
+	List<Map<String,Object>> beans;
 
-	public List<Map<String, String>> getBeans() {
+	public List<Map<String, Object>> getBeans() {
 		return beans;
 	}
 
-	public void setBeans(List<Map<String, String>> beans) {
+	public void setBeans(List<Map<String, Object>> beans) {
 		this.beans = beans;
 	}
 }

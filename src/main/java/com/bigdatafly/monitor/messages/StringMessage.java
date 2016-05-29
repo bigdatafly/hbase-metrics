@@ -3,7 +3,7 @@
  */
 package com.bigdatafly.monitor.messages;
 
-import com.bigdatafly.utils.JsonUtils;
+
 
 /**
  * @author summer
@@ -53,7 +53,13 @@ public class StringMessage implements Message{
 	@Override
 	public String toString() {
 		
-		return JsonUtils.toJson(this);
+		StringBuffer sb = new StringBuffer();
+		sb.append("{");
+		sb.append("source:"+source+",");
+		sb.append("target:"+target+",");
+		sb.append("body:"+body);
+		sb.append("}");
+		return sb.toString();
 	}
 	
 	

@@ -51,12 +51,12 @@ public class SchedulerManager {
 			throw new HbaseMonitorException("Scheduler already was started");
 	}
 	
-	private Task createRegionServerTask(String regionServerJmxQuery){
+	public Task createRegionServerTask(String regionServerJmxQuery){
 		
 		Task task = builder
 				.isMasterTask(false)
 				.setUrl(regionServerJmxQuery)
-				.setCallback(new MasterCallback(this))
+				.setCallback(new RegionServerCallback())
 				.setServers(regionServerList)
 				.setSerializer(new StringDeserializer())
 				.setInterval(requency)
@@ -65,7 +65,10 @@ public class SchedulerManager {
 					public <T extends Message> void handler(T msg) {
 						if(msg instanceof StringMessage){
 							StringMessage stringMsg = (StringMessage)msg;
-							//String body = stringMsg.getBody();
+							String body = stringMsg.getBody();
+							System.out.println("--------------regionserver begin---------------------");
+							System.out.println(body);
+							System.out.println("--------------regionserver end------------------------");
 							logger.debug(stringMsg.toString());
 						}						
 					}					
@@ -74,7 +77,7 @@ public class SchedulerManager {
 		return task;
 	}
 	
-	private Task createMasterTask(String masterJmxQuery){
+	public Task createMasterTask(String masterJmxQuery){
 		Task task = builder
 				.isMasterTask(true)
 				.setUrl(masterJmxQuery)
@@ -87,7 +90,10 @@ public class SchedulerManager {
 					public <T extends Message> void handler(T msg) {
 						if(msg instanceof StringMessage){
 							StringMessage stringMsg = (StringMessage)msg;
-							//String body = stringMsg.getBody();
+							String body = stringMsg.getBody();
+							System.out.println("--------------master begin---------------------");
+							System.out.println(body);
+							System.out.println("--------------master end------------------------");
 							logger.debug(stringMsg.toString());
 						}						
 					}					
@@ -171,5 +177,9 @@ public class SchedulerManager {
 		executor.shutdown();
 		started = false;
 		
+	}
+	
+	public HbaseJmxQuery getHbaseJmxQuery(){
+		return this.hbaseJmxQuery;
 	}
 }

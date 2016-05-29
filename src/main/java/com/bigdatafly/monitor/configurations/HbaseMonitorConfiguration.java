@@ -1,6 +1,8 @@
 package com.bigdatafly.monitor.configurations;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 import com.bigdatafly.configurations.Configuration;
 import com.bigdatafly.configurations.ConfigurationConstants;
@@ -25,8 +27,13 @@ public class HbaseMonitorConfiguration {
 
 	private File getPropteryFile(){
 		
-		String file = ConfigurationConstants.PROPERTY_FILE;
-		return new File(this.getClass().getResource("").getPath(),file);
+		String filePath = this.getClass().getResource("/").getFile() ;
+		try {
+			filePath = URLDecoder.decode(filePath,"utf-8");
+		} catch (UnsupportedEncodingException e) {
+			
+		}
+		return new File(filePath,ConfigurationConstants.PROPERTY_FILE);
 	}
 	
 	public Integer getFrequency(){
@@ -58,6 +65,12 @@ public class HbaseMonitorConfiguration {
 	
 	public static HbaseMonitorConfiguration builder(){
 		return new HbaseMonitorConfiguration();
+	}
+
+	
+	
+	public Configuration getConfiguration() {
+		return conf;
 	}
 
 	@Override

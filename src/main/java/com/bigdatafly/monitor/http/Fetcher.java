@@ -5,19 +5,25 @@ package com.bigdatafly.monitor.http;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.config.SocketConfig;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,14 +55,14 @@ import com.bigdatafly.monitor.exception.PageNotFoundException;
 public class Fetcher {
 
 	private static final Logger logger = LoggerFactory.getLogger(Fetcher.class);
-	
+	private PoolingHttpClientConnectionManager connectionManager;
 	private CloseableHttpClient httpclient;
 	private String encodingName;
 	private String encoding;
 	private final static String DEFAULT_ENCODING = "UTF-8";
 	private final static Charset DEFAULT_CHARSET = Charset.defaultCharset();
-	//private final static Charset UTF8_CHARSET = Charset.forName(DEFAULT_ENCODING);
-	private final static int BUFF_SIZE = 512;
+	
+	
 	private Charset charset;
 	
 	public enum METHOD{
@@ -79,7 +85,26 @@ public class Fetcher {
 	
 	protected CloseableHttpClient createHttpClient(){
 		
-		return  HttpClientBuilder.create().build();
+		Registry<ConnectionSocketFactory> registry = 
+				RegistryBuilder.<ConnectionSocketFactory>create()
+				.register("http", PlainConnectionSocketFactory.INSTANCE)
+				.register("https", SSLConnectionSocketFactory.getSocketFactory())
+				.build();
+		connectionManager = new PoolingHttpClientConnectionManager(registry);
+		connectionManager.setDefaultMaxPerRoute(100);
+		connectionManager.setMaxTotal(100);
+		return HttpClientBuilder
+				.create()
+				.setConnectionManager(connectionManager)
+				.setDefaultSocketConfig(socketConfig())
+				.build();
+	}
+	
+	protected SocketConfig socketConfig(){
+		return SocketConfig.custom()
+				.setSoKeepAlive(true)
+				.setTcpNoDelay(true)
+				.build();
 	}
 	/**
 	 * 
@@ -94,45 +119,27 @@ public class Fetcher {
 		
 		StringBuffer result= new StringBuffer();
 		BufferedReader br = null;
-		int readBytes = 0;
+		
 		try {
 			//CloseableHttpResponse response = client.execute(post);
 			HttpUriRequest request;
 			if(method == METHOD.GET){
-				request = new HttpPost(url);
-			}else{
 				request = new HttpGet(url);
+			}else{
+				request = new HttpPost(url);
 			}
 			
 			CloseableHttpResponse response = httpclient.execute(request); 
 			int statusCode = response.getStatusLine().getStatusCode();
 			if(statusCode == HttpStatus.SC_OK){
-				
 				HttpEntity entity = response.getEntity();
-				InputStream in = entity.getContent();
-				Header header = entity.getContentEncoding();
-				if(header != null){
-					encodingName = header.getName();
-					encoding = header.getValue();
-				}else{
-					encoding= encodingName = DEFAULT_ENCODING ;
-					charset = getCharset(encodingName,encoding);
+				//encoding= encodingName = DEFAULT_ENCODING ;
+				if(entity!=null){
+					charset = getCharset(entity,encodingName,encoding);
+					result.append(getContent(entity,charset));
 				}
-				
-				if(in!=null){
-					br = new BufferedReader(new InputStreamReader(in,charset));
-					char[] bytebuf ;
-					
-					while(true){
-						bytebuf = new char[BUFF_SIZE];
-						readBytes = br.read(bytebuf) ;
-						if(readBytes == -1)
-							break;
-						result.append(bytebuf);
-					}
-				}
-				
-			}else if(statusCode == HttpStatus.SC_BAD_REQUEST){ //²ÎÊý´íÎó·µ»Ø400
+
+			}else if(statusCode == HttpStatus.SC_BAD_REQUEST){ //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ó·µ»ï¿½400
 				if(logger.isDebugEnabled())
 					logger.debug(" {error} Http 400 Error, Maybe Jmx qry parameter IllegalArgumentException");
 				throw new IllegalArgumentException("Http 400 Error, Maybe parameters of qry Jmx is illegal");
@@ -159,13 +166,42 @@ public class Fetcher {
 		
 		return result.toString();
 	}
+	//private final static int BUFF_SIZE = 512;
+	private String getContent(HttpEntity entity,Charset charset){
+		try{
+			return EntityUtils.toString(entity, charset);
+		}catch(Exception ex){
+			return "";
+		}
+		/*
+		 * 
+		int readBytes = 0;
+		InputStream in = entity.getContent();
+		if(in!=null){
+			br = new BufferedReader(new InputStreamReader(in,charset));
+			char[] bytebuf ;
+			
+			while(true){
+				bytebuf = new char[BUFF_SIZE];
+				readBytes = br.read(bytebuf) ;
+				if(readBytes == -1)
+					break;
+				result.append(bytebuf);
+			}
+		}
+		*/
+	}
 	
-	private Charset getCharset(String encodingName,String encoding){
+	private Charset getCharset(HttpEntity entity, String encodingName,String encoding){
 		Charset charset;
 		try{
-			charset = Charset.forName(encoding);
+			charset = ContentType.getOrDefault(entity).getCharset();
 		}catch(Exception ex){
-			charset = DEFAULT_CHARSET;
+			try{
+				charset = Charset.forName(encoding);
+			}catch(Exception e){
+				charset = DEFAULT_CHARSET;
+			}
 		}
 		
 		return charset;
@@ -174,7 +210,7 @@ public class Fetcher {
 	public String fetcher(String url) throws IOException,
 		IllegalArgumentException,PageNotFoundException{
 		
-		return fetcher(url,METHOD.POST);
+		return fetcher(url,METHOD.GET);
 	}
 	
 	

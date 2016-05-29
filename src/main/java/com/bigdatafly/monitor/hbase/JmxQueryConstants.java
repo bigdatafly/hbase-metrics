@@ -35,4 +35,8 @@ public class JmxQueryConstants {
 	 */
 	public static final String URL_REGIONSERVER = "Hadoop:service=HBase,name=Master,sub=Server";
 	
+	public static final String LIVE_REGION_SERVERS_TAG = "tag.liveRegionServers";
+	
+	public static final String numRegionServers = "numRegionServers";
+	
 }
