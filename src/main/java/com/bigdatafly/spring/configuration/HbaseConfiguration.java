@@ -24,12 +24,12 @@ public class HbaseConfiguration {
     String host;
     @Value("${hbase.zk.port}")
     String port;
-    @Resource(name = "hbaseConf")
-    private org.apache.hadoop.conf.Configuration config;
+    //@Resource(name = "hbaseConf")
+    //private org.apache.hadoop.conf.Configuration config;
 
     @Bean
     public HbaseTemplate hbase() {
-        HbaseTemplate hbaseTemplate = new HbaseTemplate(config);
+        HbaseTemplate hbaseTemplate = new HbaseTemplate(hbaseConf());
         return hbaseTemplate;
     }
     
