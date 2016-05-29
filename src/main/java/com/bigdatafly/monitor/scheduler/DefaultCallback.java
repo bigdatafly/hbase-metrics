@@ -19,7 +19,7 @@ public class DefaultCallback implements Callback {
 	@Override
 	public void onError(Object target, Throwable cause) {
 		
-			logger.debug("{target:"+target+"}",cause);
+			logger.error("{target:"+target+"}",cause);
 
 	}
 
