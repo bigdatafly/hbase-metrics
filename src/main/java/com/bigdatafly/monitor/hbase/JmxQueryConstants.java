@@ -3,6 +3,10 @@
  */
 package com.bigdatafly.monitor.hbase;
 
+import java.util.Set;
+
+import org.apache.storm.shade.com.google.common.collect.Sets;
+
 /**
  * @author summer
  *
@@ -32,11 +36,42 @@ public class JmxQueryConstants {
     "clusterRequests" : 2554
   } ]
 }
-	 */
+	 */	
+	//-----------------------------master performances index begin-------------------------------------//
+
 	public static final String URL_REGIONSERVER = "Hadoop:service=HBase,name=Master,sub=Server";
 	
 	public static final String LIVE_REGION_SERVERS_TAG = "tag.liveRegionServers";
+	public static final String clusterId = "tag.clusterId";
+	public static final String liveRegionServers="tag.liveRegionServers";
+	public static final String deadRegionServers="tag.deadRegionServers";
+	public static final String zookeeperQuorum="tag.zookeeperQuorum";
+	public static final String serverName="tag.serverName";		
+	public static final String isActiveMaster="tag.isActiveMaster";	
+	public static final String masterActiveTime = "masterActiveTime";
+	public static final String masterStartTime = "masterStartTime";
+	public static final String averageLoad = "averageLoad";
+	public static final String numRegionServers="numRegionServers";
+	public static final String numDeadRegionServers="numDeadRegionServers";
+
+	public static final Set<String> MASTER_PERFORMANCES_INDEX = Sets.newHashSet
+			(new String[]{
+					LIVE_REGION_SERVERS_TAG,
+					clusterId,
+					liveRegionServers,
+					deadRegionServers,
+					zookeeperQuorum,
+					serverName,
+					isActiveMaster,
+					masterActiveTime,
+					masterStartTime,
+					averageLoad,
+					numRegionServers,
+					numDeadRegionServers
+					});
 	
-	public static final String numRegionServers = "numRegionServers";
+	
+	//-----------------------------master performances index end-------------------------------------//
+	
 	
 }

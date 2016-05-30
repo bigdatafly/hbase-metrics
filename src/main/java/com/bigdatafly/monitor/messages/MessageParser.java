@@ -1,12 +1,15 @@
 /**
  * 
  */
+
 package com.bigdatafly.monitor.messages;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.storm.shade.com.google.common.collect.Maps;
 import org.springframework.util.StringUtils;
 
 import com.bigdatafly.monitor.hbase.JmxQueryConstants;
@@ -56,5 +59,24 @@ public class MessageParser {
 		}
 		
 		return result;
+	}
+	
+	public static Map<String,Object> getParamters(Beans beans,String key){
+		
+		Map<String,Object> jmxParams = Maps.newHashMap();
+		if(beans!=null && beans.getBeans()!=null && !StringUtils.isEmpty(key)){
+			for(Map<String,Object> bean : beans.getBeans()){
+				if(bean.containsKey(key))
+					jmxParams.put(key, bean.get(key));
+			}
+		}
+		return jmxParams;
+	}
+	
+	public static Map<String,Object> getParamters(Beans beans,Set<String> keys){
+		Map<String,Object> jmxParams = Maps.newHashMap();
+		for(String key:keys)
+			jmxParams.putAll(getParamters(beans,key));
+		return jmxParams;
 	}
 }

@@ -29,6 +29,9 @@ public class ConfigurationConstants {
 	
 	public static final String REGION_SERVER_JMX_QRY="regionserver.jmx.qry";
 	
+	public static final String ZOOKEEPER_HOST_KEY = "hbase.zk.host";
+	
+	public static final String ZOOKEEPER_PORT_KEY = "hbase.zk.port";
 	
 
 }

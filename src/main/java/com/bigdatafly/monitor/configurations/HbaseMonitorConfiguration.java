@@ -63,11 +63,15 @@ public class HbaseMonitorConfiguration {
 		return conf.getString(ConfigurationConstants.REGION_SERVER_JMX_QRY);
 	}
 	
-	public static HbaseMonitorConfiguration builder(){
-		return new HbaseMonitorConfiguration();
-	}
-
 	
+
+	public String getHbaseZookeeperHost(){
+		return conf.getString(ConfigurationConstants.ZOOKEEPER_HOST_KEY);
+	}
+	
+	public int getHbaseZookeeperPort(){
+		return conf.getInteger(ConfigurationConstants.ZOOKEEPER_PORT_KEY);
+	}
 	
 	public Configuration getConfiguration() {
 		return conf;
@@ -79,5 +83,7 @@ public class HbaseMonitorConfiguration {
 		return "{configuration:"+this.conf.toString()+"]}";
 	}
 	
-	
+	public static HbaseMonitorConfiguration builder(){
+		return new HbaseMonitorConfiguration();
+	}
 }

@@ -3,8 +3,6 @@
  */
 package com.bigdatafly.spring.configuration;
 
-import javax.annotation.Resource;
-
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
