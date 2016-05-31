@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -184,6 +185,18 @@ public class SchedulerManager {
 		regionServerList.remove(url);
 	}
 	
+	public void await(long timeout, TimeUnit unit){
+		
+		try {
+			
+			executor.awaitTermination(timeout, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			
+			if(logger.isDebugEnabled())
+				logger.debug("InterruptedException:",e);
+		}
+	}
+	
 	public void await(){
 		
 		while(true){
@@ -196,14 +209,7 @@ public class SchedulerManager {
 			}
 		}
 		
-		/*
-		try {
-			executor.awaitTermination(1000, TimeUnit.SECONDS);
-		} catch (InterruptedException e) {
-			
-			if(logger.isDebugEnabled())
-				logger.debug("InterruptedException:",e);
-		}*/
+	
 	}
 	
 	public void shutdown(){

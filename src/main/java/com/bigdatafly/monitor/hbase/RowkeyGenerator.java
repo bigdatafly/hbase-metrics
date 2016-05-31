@@ -36,8 +36,8 @@ public class RowkeyGenerator {
 		return this;
 	}
 	
-	private static String getTimestamp(){
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyymmddHHmm");
+	public static String getTimestamp(){
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
 		return sdf.format(new Date());
 	}
 	
