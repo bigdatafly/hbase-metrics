@@ -83,7 +83,7 @@ public class JmxQueryConstants {
 	static{
 	
 		for(String PERFORMANCES_INDEX:MASTER_PERFORMANCES_INDEX){
-			PERFORMANCES_MAP.put(PERFORMANCES_INDEX, MASTER_MONITOR_TYPE+StringUtils.leftPad(String.valueOf(MASTER_PERFORMANCES_INDEX.size()+1), 3,"0") );
+			PERFORMANCES_MAP.put(PERFORMANCES_INDEX, MASTER_MONITOR_TYPE+StringUtils.leftPad(String.valueOf(PERFORMANCES_MAP.size()+1), 3,"0") );
 		}
 	}
 	
@@ -122,7 +122,7 @@ public class JmxQueryConstants {
 	static{
 	
 		for(String PERFORMANCES_INDEX:REGION_SERVER_PERFORMANCES_INDEX){
-			PERFORMANCES_MAP.put(PERFORMANCES_INDEX, REGION_SERVER_MONITOR_TYPE+StringUtils.leftPad(String.valueOf(MASTER_PERFORMANCES_INDEX.size()+1), 3,"0") );
+			PERFORMANCES_MAP.put(PERFORMANCES_INDEX, REGION_SERVER_MONITOR_TYPE+StringUtils.leftPad(String.valueOf(PERFORMANCES_MAP.size()+1), 3,"0") );
 		}
 	}
 	/*
