@@ -66,8 +66,11 @@ public class JsonTest {
 		
 		System.out.println("*****************regionservers hostname*********************");
 		Beans beans = JsonUtils.fromJson(strJson, Beans.class);
-		List<String> regionServerHosts = MessageParser.getRegionServerFromJmxMessage(beans);
+		List<String> regionServerHosts = MessageParser.getLiveRegionServerFromJmxMessage(beans);
 		System.out.println(regionServerHosts);
+		
+		List<String> deadRegionServerHosts = MessageParser.getDeadRegionServerFromJmxMessage(beans);
+		System.out.println(deadRegionServerHosts);
 	}
 
 }

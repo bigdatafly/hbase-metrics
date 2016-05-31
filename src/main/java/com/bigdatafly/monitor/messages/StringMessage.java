@@ -13,21 +13,23 @@ public class StringMessage implements Message{
 
 	private String body;
 	private Object target;
-	private Object source;
+	private Object source;//存放 servername
+	private String resource;//存放URL
 	
-	public StringMessage(Object source,Object target,String body){
+	public StringMessage(Object source,String resource,Object target,String body){
 		this.source = source;
 		this.target = target;
 		this.body = body;
+		this.resource = resource;
 	}
 	
 	public StringMessage(String body){
 		
-		this("",body);
+		this("","",body);
 	} 
 	
-	public StringMessage(Object source,String body){
-		this(source,null,body);
+	public StringMessage(Object source,String resource,String body){
+		this(source, resource,null,body);
 	}
 	
 	public String getBody() {
@@ -50,16 +52,36 @@ public class StringMessage implements Message{
 		return target;
 	}
 
+	
+	public void setTarget(Object target) {
+		this.target = target;
+	}
+
+	public void setSource(Object source) {
+		this.source = source;
+	}
+
+	public void setResource(String resource) {
+		this.resource = resource;
+	}
+
 	@Override
 	public String toString() {
 		
 		StringBuffer sb = new StringBuffer();
 		sb.append("{");
 		sb.append("source:"+source+",");
+		sb.append("resource:"+resource+",");
 		sb.append("target:"+target+",");
 		sb.append("body:"+body);
 		sb.append("}");
 		return sb.toString();
+	}
+
+	@Override
+	public String getResource() {
+		
+		return this.resource;
 	}
 	
 	

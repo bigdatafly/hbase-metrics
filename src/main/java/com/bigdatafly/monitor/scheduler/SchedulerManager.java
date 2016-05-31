@@ -18,6 +18,7 @@ import com.bigdatafly.monitor.configurations.HbaseMonitorConfiguration;
 import com.bigdatafly.monitor.exception.HbaseMonitorException;
 import com.bigdatafly.monitor.hbase.JmxQueryConstants;
 import com.bigdatafly.monitor.hbase.MonitorDataOperator;
+import com.bigdatafly.monitor.hbase.ServerNodeOperator;
 import com.bigdatafly.monitor.hbase.model.Beans;
 import com.bigdatafly.monitor.http.HbaseJmxQuery;
 import com.bigdatafly.monitor.messages.Message;
@@ -42,6 +43,7 @@ public class SchedulerManager {
 	private Builder builder;
 	private volatile boolean started;
 	private MonitorDataOperator hbaseOperator;
+	private ServerNodeOperator serverNodeOperator;
 	
 	public void start() throws HbaseMonitorException{
 		
@@ -71,11 +73,22 @@ public class SchedulerManager {
 					public <T extends Message> void handler(T msg) {
 						if(msg instanceof StringMessage){
 							StringMessage stringMsg = (StringMessage)msg;
+							String serverName = stringMsg.getResource();
 							String body = stringMsg.getBody();
-							System.out.println("--------------regionserver begin---------------------");
-							System.out.println(body);
-							System.out.println("--------------regionserver end------------------------");
-							logger.debug(stringMsg.toString());
+							Beans beans = MessageParser.jmxMessageParse(body);
+							Map<String,Object> performancesIndex = MessageParser.getParamters(beans, JmxQueryConstants.REGION_SERVER_PERFORMANCES_INDEX);
+							try {
+								hbaseOperator.put(serverName,performancesIndex);
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							if(logger.isDebugEnabled()){
+								System.out.println("--------------regionserver("+serverName+") begin---------------------");
+								System.out.println(body);
+								System.out.println("--------------regionserver("+serverName+") end------------------------");
+								logger.debug(stringMsg.toString());
+							}
 						}						
 					}					
 				})
@@ -100,7 +113,8 @@ public class SchedulerManager {
 							Beans beans = MessageParser.jmxMessageParse(body);
 							Map<String,Object> performancesIndex = MessageParser.getParamters(beans, JmxQueryConstants.MASTER_PERFORMANCES_INDEX);
 							try {
-								hbaseOperator.put(performancesIndex);
+								hbaseOperator.put(master,performancesIndex);
+								//serverNodeOperator.put(master, node);
 							} catch (IOException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
@@ -141,6 +155,8 @@ public class SchedulerManager {
 		this.builder = Builder.builder();
 		
 		this.hbaseOperator = new MonitorDataOperator(this.config);
+		
+		this.serverNodeOperator = new ServerNodeOperator(this.config);
 		
 		if(logger.isDebugEnabled())
 			logger.debug(config.toString());
@@ -199,5 +215,10 @@ public class SchedulerManager {
 	
 	public HbaseJmxQuery getHbaseJmxQuery(){
 		return this.hbaseJmxQuery;
+	}
+
+	public ServerNodeOperator getServerNodeOperator() {
+		
+		return this.serverNodeOperator;
 	}
 }

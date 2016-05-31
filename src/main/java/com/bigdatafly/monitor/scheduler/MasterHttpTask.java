@@ -3,6 +3,11 @@
  */
 package com.bigdatafly.monitor.scheduler;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.util.StringUtils;
+
 import com.bigdatafly.monitor.messages.Message;
 import com.bigdatafly.monitor.serialization.Deserializer;
 
@@ -34,9 +39,16 @@ public class MasterHttpTask extends AbstractHttpTask{
 		// TODO Auto-generated constructor stub
 	}
 
-	public String getHtml() throws Exception{
+	@Override
+	protected List<Message> poll() throws Exception {
 		
-		return fetcher.fetcher(this.url);
+		List<Message> msgs = new ArrayList<Message>();
+		
+		String html = super.getHtml(url);
+		if(this.deserializer!=null && !StringUtils.isEmpty(html))
+				msgs.add(deserializer.deserialize(this.url,"",this,html));
+
+		return msgs;
 	}
 	
 

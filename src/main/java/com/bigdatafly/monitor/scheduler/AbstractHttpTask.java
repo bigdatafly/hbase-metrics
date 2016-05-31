@@ -5,8 +5,6 @@ package com.bigdatafly.monitor.scheduler;
 
 import java.util.Set;
 
-import org.springframework.util.StringUtils;
-
 import com.bigdatafly.monitor.http.Fetcher;
 import com.bigdatafly.monitor.messages.Message;
 import com.bigdatafly.monitor.serialization.Deserializer;
@@ -55,16 +53,9 @@ public abstract class AbstractHttpTask extends AbstractTask implements Task{
 		this.fetcher.close();
 	}
 
-	@Override
-	protected Message poll() throws Exception {
-		
-		String html = getHtml();
-		if(this.deserializer!=null && !StringUtils.isEmpty(html))
-			return deserializer.deserialize(this.url,this,html);
-		return null;
+	protected  String getHtml(String url) throws Exception{
+		return fetcher.fetcher(this.url);
 	}
-	
-	protected abstract String getHtml() throws Exception;
 	
 	public Set<String> getServers() {
 		return servers;

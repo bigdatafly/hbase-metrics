@@ -43,7 +43,10 @@ public class RegionServerHttpTask extends AbstractHttpTask{
 		
 	}
 
-	protected String getHtml() throws Exception{
+	@Override
+	protected List<Message> poll() throws Exception{
+		
+		List<Message> msgs = new ArrayList<Message>();
 		
 		String html = null;
 		int size = 0;
@@ -52,22 +55,25 @@ public class RegionServerHttpTask extends AbstractHttpTask{
 		synchronized(cli){
 			size = cli.size();
 			while(curr<size){
-				String url = getRegionServerJmxQuery(this.url, cli.get(curr++));
+				String regionServer = cli.get(curr++);
+				String url = getRegionServerJmxQuery(this.url, regionServer);
 				try{
 					html = fetcher.fetcher(url);
-					if(!StringUtils.isEmpty(html))
-						break;
+					if(this.deserializer!=null && !StringUtils.isEmpty(html))
+						msgs.add(deserializer.deserialize(this.url,regionServer,this,html));
 				}catch(PageNotFoundException ex){
+					/*
 					if(curr == size)
 						throw ex;
+						*/
 				}
 				
 			}	
 		}
-		
-		return html;
+			
+		return msgs;
 	}
-	
+
 	private String getRegionServerJmxQuery(final String url,final String regionServer){
 		
 		return HbaseJmxQuery.getRegionServerJmxQuery(url, regionServer);

@@ -12,7 +12,7 @@ import org.junit.Test;
 
 public class FetcherTest {
 
-	public static final String URL_TEST = "http://h103:60010/jmx?";
+	public static final String URL_TEST = "http://172.27.102.116:60010/jmx?";
 	
 	@Test
 	public void fetcherTest() throws Exception{

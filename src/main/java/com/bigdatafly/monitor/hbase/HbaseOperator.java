@@ -4,6 +4,8 @@
 package com.bigdatafly.monitor.hbase;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.hadoop.conf.Configuration;
@@ -19,23 +21,24 @@ import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.security.User;
 import org.apache.hadoop.hbase.util.Bytes;
 
+import com.bigdatafly.monitor.configurations.HbaseMonitorConfiguration;
+
 
 /**
  * @author summer
  *
  */
-public class HbaseOperator {
+public abstract class HbaseOperator {
 
 	Configuration hbaseConfig;
 	RowkeyGenerator rowkeyGenerator;
+	HbaseMonitorConfiguration conf;
+
 	
-	static{
-		System.setProperty("HADOOP_USER_NAME", "hadoop");
-	}
-	
-	public HbaseOperator(){
-		
+	public HbaseOperator(HbaseMonitorConfiguration conf){
+		this.conf = conf;
 		rowkeyGenerator = RowkeyGenerator.builder();
+		this.hbaseConfig = createHBaseConfiguration(conf.getHbaseZookeeperHost(), conf.getHbaseZookeeperPort());
 	}
 	
 	Configuration createHBaseConfiguration(String zk,int port){
@@ -65,13 +68,21 @@ public class HbaseOperator {
 		return connection;
 	}
 	
-	protected void put(String tableName,String rowkey,String family,Map<String,Object> values) throws IOException{
+	protected void put(String tableName,String family,Map<String,Object> values) throws IOException{
 		
 		Table table = null;
 		try(Connection connection = createConnection()){
-			 table = connection.getTable(TableName.valueOf(tableName));
-			Put put = serializer(rowkey,family,values);
-			table.put(put);
+			table = connection.getTable(TableName.valueOf(tableName));
+			List<Put> puts = new ArrayList<Put>();
+			for(Map.Entry<String,Object> e : values.entrySet()){
+				String key = e.getKey();
+				Object value = e.getValue();
+				String rowkey = rowkeyGenerator(getServername(),key);
+				Put put = serializer(rowkey,family,key,value);
+				puts.add(put);
+			}
+			
+			table.put(puts);
 		}catch(IOException ex){
 			throw ex;
 		}finally{
@@ -82,6 +93,19 @@ public class HbaseOperator {
 		
 	}
 	
+
+	protected String getServername() {
+		
+		return null;
+	}
+
+	
+	protected Put serializer(String rowkey,String family,String qualifier,Object value){
+		Put put = new Put(Bytes.toBytes(rowkey));
+		put.addColumn(Bytes.toBytes(family), Bytes.toBytes(qualifier), Bytes.toBytes(value.toString()));
+		return put;
+	}
+	/*
 	protected Put serializer(String rowkey,String family,Map<String,Object> cf){
 		Put put = new Put(Bytes.toBytes(rowkey));
 		for(Map.Entry<String, Object> e : cf.entrySet()){
@@ -91,10 +115,8 @@ public class HbaseOperator {
 		}
 		return put;
 	}
-	
-	protected String RowkeyGenerator(){
-		return "";
-	}
+	*/
+	protected abstract String rowkeyGenerator(String serverName,String key);
 	
 	protected void createTable(String tableName,String family){
 		
@@ -106,6 +128,19 @@ public class HbaseOperator {
 						family);
 				tableDescriptor.addFamily(columnDescriptor);
 				admin.createTable(tableDescriptor);
+			}
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
+	
+	protected void dropTable(String tableName){
+		try(Connection connection = createConnection()){
+			Admin admin = connection.getAdmin();
+			if(admin.tableExists(TableName.valueOf(tableName)) && admin.isTableEnabled(TableName.valueOf(tableName))){
+				admin.disableTable(TableName.valueOf(tableName));
+				admin.deleteTable(TableName.valueOf(tableName));
+				
 			}
 		}catch(Exception ex){
 			ex.printStackTrace();

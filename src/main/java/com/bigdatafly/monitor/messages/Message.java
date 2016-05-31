@@ -13,5 +13,7 @@ public interface Message {
 	
 	Object getTarget();
 	
+	String getResource();
+	
 	String getBody();
 }

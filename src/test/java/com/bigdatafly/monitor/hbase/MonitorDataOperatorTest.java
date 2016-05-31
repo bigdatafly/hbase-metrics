@@ -12,7 +12,7 @@ import com.bigdatafly.monitor.configurations.HbaseMonitorConfiguration;
  * @author summer
  *
  */
-public class HbaseOperatorTest {
+public class MonitorDataOperatorTest {
 
 	MonitorDataOperator hbaseOperator;
 	HbaseMonitorConfiguration conf; 
@@ -28,7 +28,7 @@ public class HbaseOperatorTest {
 	}
 	
 	@Test 
-	public void insertMonitorDataTest(){
-		
+	public void dropTableTest(){
+		hbaseOperator.dropTable();
 	}
 }

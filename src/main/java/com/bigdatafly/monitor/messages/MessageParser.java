@@ -27,12 +27,27 @@ public class MessageParser {
 		return JsonUtils.fromJson(json, Beans.class);
 	}
 
-	public static List<String> getRegionServerFromJmxMessage(Beans beans){
+	public static List<String> getLiveRegionServerFromJmxMessage(Beans beans){
 		
 		List<String> result= new ArrayList<String>();
 		if(beans!=null && beans.getBeans()!=null && !beans.getBeans().isEmpty()){
 			for(Map<String,Object> bean : beans.getBeans()){
 				String regionServers = bean.get(JmxQueryConstants.LIVE_REGION_SERVERS_TAG)+"";
+				if(!StringUtils.isEmpty(regionServers)){
+					result.addAll(getRegionServerHostname(regionServers));
+				}	
+			}
+		}
+		
+		return result;
+	}
+	
+	public static List<String> getDeadRegionServerFromJmxMessage(Beans beans){
+		
+		List<String> result= new ArrayList<String>();
+		if(beans!=null && beans.getBeans()!=null && !beans.getBeans().isEmpty()){
+			for(Map<String,Object> bean : beans.getBeans()){
+				String regionServers = bean.get(JmxQueryConstants.deadRegionServers)+"";
 				if(!StringUtils.isEmpty(regionServers)){
 					result.addAll(getRegionServerHostname(regionServers));
 				}	

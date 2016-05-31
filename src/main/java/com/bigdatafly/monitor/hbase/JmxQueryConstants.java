@@ -3,9 +3,13 @@
  */
 package com.bigdatafly.monitor.hbase;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.storm.shade.com.google.common.collect.Sets;
+import org.apache.storm.shade.org.apache.commons.lang.StringUtils;
+
+import com.google.common.collect.Maps;
 
 /**
  * @author summer
@@ -13,6 +17,12 @@ import org.apache.storm.shade.com.google.common.collect.Sets;
  */
 public class JmxQueryConstants {
 
+	public static final String MASTER_MONITOR_TYPE="1";
+	public static final String REGION_SERVER_MONITOR_TYPE="2";
+	public static final String REGION_MONITOR_TYPE="3";
+	public static final String JVM_MONITOR_TYPE="4";
+	
+	//---------------------------MonitorType 1--master performances index begin-------------------------------------//
 	public static final String URL_MASTER_BALANCER = "Hadoop:service=HBase,name=Master,sub=Balancer";
 	
 	/*
@@ -37,8 +47,7 @@ public class JmxQueryConstants {
   } ]
 }
 	 */	
-	//-----------------------------master performances index begin-------------------------------------//
-
+	
 	public static final String URL_REGIONSERVER = "Hadoop:service=HBase,name=Master,sub=Server";
 	
 	public static final String LIVE_REGION_SERVERS_TAG = "tag.liveRegionServers";
@@ -69,9 +78,56 @@ public class JmxQueryConstants {
 					numRegionServers,
 					numDeadRegionServers
 					});
+	public static final Map<String,String> PERFORMANCES_MAP = Maps.newHashMap();
 	
+	static{
+	
+		for(String PERFORMANCES_INDEX:MASTER_PERFORMANCES_INDEX){
+			PERFORMANCES_MAP.put(PERFORMANCES_INDEX, MASTER_MONITOR_TYPE+StringUtils.leftPad(String.valueOf(MASTER_PERFORMANCES_INDEX.size()+1), 3,"0") );
+		}
+	}
+	
+	public static String getMonitorTypeByItem(String item){
+		return PERFORMANCES_MAP.get(item);
+	}
 	
 	//-----------------------------master performances index end-------------------------------------//
+
+	//---------------------------MonitorType 2--regionserver performances index begin-------------------------------------//
 	
+	public static final String totalRequestCount = "totalRequestCount";
+	public static final String readRequestCount = "readRequestCount";
+	public static final String writeRequestCount="writeRequestCount";
+	public static final String blockCacheSize="blockCacheSize";
+	public static final String blockCacheHitCount="blockCacheHitCount";
+	public static final String regionCount="regionCount";		
+	public static final String blockCacheCountHitPercent = "blockCacheCountHitPercent";
+	public static final String blockCacheEvictionCount="blockCacheEvictionCount";
+	public static final String blockCacheMissCount="blockCacheMissCount";
+
+	public static final Set<String> REGION_SERVER_PERFORMANCES_INDEX = Sets.newHashSet
+			(new String[]{
+					totalRequestCount,
+					readRequestCount,
+					writeRequestCount,
+					blockCacheSize,
+					blockCacheHitCount,
+					blockCacheMissCount,
+					blockCacheEvictionCount,
+					blockCacheCountHitPercent,
+					regionCount
+					});
+	//public static final Map<String,String> REGION_SERVER_PERFORMANCES_MAP = Maps.newHashMap();
 	
+	static{
+	
+		for(String PERFORMANCES_INDEX:REGION_SERVER_PERFORMANCES_INDEX){
+			PERFORMANCES_MAP.put(PERFORMANCES_INDEX, REGION_SERVER_MONITOR_TYPE+StringUtils.leftPad(String.valueOf(MASTER_PERFORMANCES_INDEX.size()+1), 3,"0") );
+		}
+	}
+	/*
+	public static String getMonitorTypeByItem(String item){
+		return PERFORMANCES_MAP.get(item);
+	}*/
+	//---------------------------MonitorType 2--regionserver performances index end-------------------------------------//
 }

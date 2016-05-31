@@ -3,6 +3,7 @@
  */
 package com.bigdatafly.monitor.scheduler;
 
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import org.slf4j.Logger;
@@ -117,18 +118,20 @@ public abstract class AbstractTask implements Task {
 	public void execute() {
 
 		try {
-			Message msg = poll();
-			if(msg!=null){
-				if(this.callback!=null)
-					this.callback.onMessage(this, msg);
-				process(msg);
+			List<Message> msgs = poll();
+			for(Message msg:msgs){
+				if(msg!=null){
+					if(this.callback!=null)
+						this.callback.onMessage(this, msg);
+					process(msg);
+				}
 			}
 		} catch (Exception e) {
 			this.callback.onError(this, e);
 		}
 	}
 
-	protected abstract Message poll() throws Exception;
+	protected abstract List<Message> poll() throws Exception;
 	
 	protected  <T extends Message> void process(T message){
 		

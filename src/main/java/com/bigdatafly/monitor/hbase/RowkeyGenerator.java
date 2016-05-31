@@ -18,7 +18,7 @@ public class RowkeyGenerator {
 	
 	public String rowkey(){
 		
-		return serverName+"."+monitorType+"."+getTimestamp();
+		return serverName+"$"+monitorType+""+getTimestamp();
 	}
 	
 	private String serverName;
@@ -37,7 +37,7 @@ public class RowkeyGenerator {
 	}
 	
 	private static String getTimestamp(){
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyymmddHHmmss");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyymmddHHmm");
 		return sdf.format(new Date());
 	}
 	
