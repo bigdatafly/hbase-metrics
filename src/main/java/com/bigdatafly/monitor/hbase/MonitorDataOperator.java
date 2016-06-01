@@ -46,7 +46,7 @@ public class MonitorDataOperator extends HbaseOperator{
 	protected String rowkeyGenerator(String serverName, String key) {
 	
 		return rowkeyGenerator
-				.setMonitorType(JmxQueryConstants.getMonitorTypeByItem(key))
+				.setMonitorType(key)
 				.setServerName(serverName)
 				.rowkey();
 	}

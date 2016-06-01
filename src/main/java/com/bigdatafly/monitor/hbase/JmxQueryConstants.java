@@ -17,6 +17,12 @@ import com.google.common.collect.Maps;
  */
 public class JmxQueryConstants {
 
+	public static final String PROJECT_HBASE = "1";
+	public static final String PROJECT_STORM = "2";
+	
+	
+	
+	
 	public static final String MASTER_MONITOR_TYPE="1";
 	public static final String REGION_SERVER_MONITOR_TYPE="2";
 	public static final String REGION_MONITOR_TYPE="3";
@@ -87,7 +93,7 @@ public class JmxQueryConstants {
 		}
 	}
 	
-	public static String getMonitorTypeByItem(String item){
+	public static synchronized String getMonitorTypeByItem(String item){
 		return PERFORMANCES_MAP.get(item);
 	}
 	

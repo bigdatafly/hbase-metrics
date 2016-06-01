@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import com.bigdatafly.monitor.configurations.HbaseMonitorConfiguration;
 import com.bigdatafly.monitor.exception.HbaseMonitorException;
 import com.bigdatafly.monitor.hbase.MonitorDataOperator;
+import com.bigdatafly.monitor.hbase.MonitorItemOperator;
 import com.bigdatafly.monitor.hbase.ServerNodeOperator;
 import com.bigdatafly.monitor.http.HbaseJmxQuery;
 import com.bigdatafly.monitor.messages.Message;
@@ -42,8 +43,9 @@ public class SchedulerManager {
 	private volatile boolean started;
 	private MonitorDataOperator hbaseOperator;
 	private ServerNodeOperator serverNodeOperator;
+	private MonitorItemOperator monitorItemOperator;
 	private Consumer messageConsumer;
-	
+	//public static final Map<String,String> MONITOR_ITEM_MAP = Maps.newHashMap();
 	
 	public void start() throws HbaseMonitorException{
 		
@@ -170,6 +172,8 @@ public class SchedulerManager {
 		
 		this.serverNodeOperator = new ServerNodeOperator(this.config);
 		
+		this.monitorItemOperator = new MonitorItemOperator(this.config);
+		
 		this.messageConsumer = new HbaseConsumer(hbaseOperator);
 		
 		if(logger.isDebugEnabled())
@@ -241,4 +245,11 @@ public class SchedulerManager {
 		
 		return this.serverNodeOperator;
 	}
+
+	public MonitorItemOperator getMonitorItemOperator() {
+		
+		return this.monitorItemOperator;
+	}
+	
+
 }

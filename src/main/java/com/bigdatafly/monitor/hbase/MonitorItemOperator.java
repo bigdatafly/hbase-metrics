@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import com.bigdatafly.monitor.configurations.HbaseMonitorConfiguration;
+import com.google.common.collect.Maps;
 
 /**
  * @author summer
@@ -42,4 +43,25 @@ public class MonitorItemOperator extends HbaseOperator{
 		return key;
 	}
 
+	public Map<String,String> findAll(){
+		
+		try {
+			return super.findAll(DEFAULT_TABLE_NAME, DEFAULT_COLUMN_FAMILY);
+		} catch (IOException e) {
+			
+			return Maps.newHashMap();
+		}
+	}
+	
+	public boolean exists(String keyrow){
+		
+		try {
+			return exists(DEFAULT_TABLE_NAME,keyrow);
+		} catch (IOException e) {
+			return false;
+		}
+	}
+	
+	
+	
 }

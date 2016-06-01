@@ -5,8 +5,11 @@ package com.bigdatafly.monitor.scheduler;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import com.bigdatafly.monitor.hbase.MonitorItemOperator;
 import com.bigdatafly.monitor.hbase.ServerNodeOperator;
 import com.bigdatafly.monitor.hbase.model.Beans;
 import com.bigdatafly.monitor.hbase.model.ServerNode;
@@ -23,12 +26,14 @@ public class MasterCallback extends DefaultCallback{
 
 	SchedulerManager parent;
 	ServerNodeOperator serverNodeOperator;
+	MonitorItemOperator monitoritemOperator;
 	/**
 	 * 
 	 */
 	public MasterCallback(SchedulerManager parent) {
 		this.parent = parent;
 		this.serverNodeOperator = parent.getServerNodeOperator();
+		this.monitoritemOperator = parent.getMonitorItemOperator();
 	}
 
 	@Override
@@ -88,6 +93,14 @@ public class MasterCallback extends DefaultCallback{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}
+	}
+	
+	private void refreshMonitorItem(Beans beans){
+		
+		List<Map<String,Object>> items = beans.getBeans();
+		for(Map<String,Object> item:items){
+			
 		}
 	}
 
