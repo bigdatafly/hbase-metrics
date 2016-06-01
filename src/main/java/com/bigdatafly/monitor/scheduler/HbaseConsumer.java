@@ -96,6 +96,7 @@ public class HbaseConsumer implements Consumer{
 	public void consumer(Message msg) throws HbaseMonitorException{
 		
 		if(msg instanceof StringMessage){
+			
 			StringMessage stringMsg = (StringMessage)msg;
 			String serverName = stringMsg.getResource();
 			String body = stringMsg.getBody();
