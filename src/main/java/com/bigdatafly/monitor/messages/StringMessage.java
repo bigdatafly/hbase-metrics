@@ -3,7 +3,7 @@
  */
 package com.bigdatafly.monitor.messages;
 
-
+import com.bigdatafly.utils.DateUtils;
 
 /**
  * @author summer
@@ -15,12 +15,14 @@ public class StringMessage implements Message{
 	private Object target;
 	private Object source;//存放 servername
 	private String resource;//存放URL
+	private String id;
 	
 	public StringMessage(Object source,String resource,Object target,String body){
 		this.source = source;
 		this.target = target;
 		this.body = body;
 		this.resource = resource;
+		this.id = DateUtils.getTimestamp();
 	}
 	
 	public StringMessage(String body){
@@ -70,6 +72,7 @@ public class StringMessage implements Message{
 		
 		StringBuffer sb = new StringBuffer();
 		sb.append("{");
+		sb.append("id:"+id+",");
 		sb.append("source:"+source+",");
 		sb.append("resource:"+resource+",");
 		sb.append("target:"+target+",");
@@ -82,6 +85,12 @@ public class StringMessage implements Message{
 	public String getResource() {
 		
 		return this.resource;
+	}
+
+	@Override
+	public String getId() {
+		
+		return this.id;
 	}
 	
 	

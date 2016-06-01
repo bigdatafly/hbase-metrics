@@ -16,4 +16,6 @@ public interface Message {
 	String getResource();
 	
 	String getBody();
+	
+	String getId();
 }

@@ -3,7 +3,6 @@
  */
 package com.bigdatafly.monitor.scheduler;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -17,14 +16,12 @@ import org.slf4j.LoggerFactory;
 
 import com.bigdatafly.monitor.configurations.HbaseMonitorConfiguration;
 import com.bigdatafly.monitor.exception.HbaseMonitorException;
-import com.bigdatafly.monitor.hbase.JmxQueryConstants;
 import com.bigdatafly.monitor.hbase.MonitorDataOperator;
 import com.bigdatafly.monitor.hbase.ServerNodeOperator;
-import com.bigdatafly.monitor.hbase.model.Beans;
 import com.bigdatafly.monitor.http.HbaseJmxQuery;
 import com.bigdatafly.monitor.messages.Message;
-import com.bigdatafly.monitor.messages.MessageParser;
 import com.bigdatafly.monitor.messages.StringMessage;
+import com.bigdatafly.monitor.mq.MessageQueue;
 import com.bigdatafly.monitor.serialization.StringDeserializer;
 
 /**
@@ -45,6 +42,8 @@ public class SchedulerManager {
 	private volatile boolean started;
 	private MonitorDataOperator hbaseOperator;
 	private ServerNodeOperator serverNodeOperator;
+	private Consumer messageConsumer;
+	
 	
 	public void start() throws HbaseMonitorException{
 		
@@ -53,6 +52,7 @@ public class SchedulerManager {
 			registry(masterQuery,createMasterTask(masterQuery));
 			String regionServerJmxQuery = this.hbaseJmxQuery.getRegionServerJmxQuery();
 			registry(regionServerJmxQuery,createRegionServerTask(regionServerJmxQuery));
+			this.messageConsumer.start();
 			started = true;
 			if(logger.isDebugEnabled())
 				logger.debug("{debug} master "+this.master+" will be started");
@@ -74,6 +74,11 @@ public class SchedulerManager {
 					public <T extends Message> void handler(T msg) {
 						if(msg instanceof StringMessage){
 							StringMessage stringMsg = (StringMessage)msg;
+							MessageQueue.offer(stringMsg);
+						}
+						/*
+						if(msg instanceof StringMessage){
+							StringMessage stringMsg = (StringMessage)msg;
 							String serverName = stringMsg.getResource();
 							String body = stringMsg.getBody();
 							Beans beans = MessageParser.jmxMessageParse(body);
@@ -90,7 +95,7 @@ public class SchedulerManager {
 								System.out.println("--------------regionserver("+serverName+") end------------------------");
 								logger.debug(stringMsg.toString());
 							}
-						}						
+						}*/						
 					}					
 				})
 				.create();
@@ -110,6 +115,12 @@ public class SchedulerManager {
 					public <T extends Message> void handler(T msg) {
 						if(msg instanceof StringMessage){
 							StringMessage stringMsg = (StringMessage)msg;
+							stringMsg.setResource(master);
+							MessageQueue.offer(stringMsg);
+						}
+						/*
+						if(msg instanceof StringMessage){
+							StringMessage stringMsg = (StringMessage)msg;
 							String body = stringMsg.getBody();
 							Beans beans = MessageParser.jmxMessageParse(body);
 							Map<String,Object> performancesIndex = MessageParser.getParamters(beans, JmxQueryConstants.MASTER_PERFORMANCES_INDEX);
@@ -126,7 +137,7 @@ public class SchedulerManager {
 								System.out.println("--------------master end------------------------");
 								logger.debug(stringMsg.toString());
 							}
-						}						
+						}*/						
 					}					
 				})
 				.create();
@@ -158,6 +169,8 @@ public class SchedulerManager {
 		this.hbaseOperator = new MonitorDataOperator(this.config);
 		
 		this.serverNodeOperator = new ServerNodeOperator(this.config);
+		
+		this.messageConsumer = new HbaseConsumer(hbaseOperator);
 		
 		if(logger.isDebugEnabled())
 			logger.debug(config.toString());
@@ -214,6 +227,7 @@ public class SchedulerManager {
 	
 	public void shutdown(){
 		
+		this.messageConsumer.stop();
 		executor.shutdown();
 		started = false;
 		
