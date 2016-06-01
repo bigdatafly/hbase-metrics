@@ -26,21 +26,15 @@ public class ServerNodeOperator extends HbaseOperator{
 	}
 
 	
-	public void put(String serverName,ServerNode node) throws IOException{
+	public void put(ServerNode node) throws IOException{
 		this.node = node;
 		Map<String,Object> values = new HashMap<>();
-		values.put("serverName", node.getServerName());
-		values.put("monitorType", node.getMonitorType());
-		values.put("online", node.getOnline());
+		values.put("serverName", this.node.getServerName());
+		values.put("monitorType", this.node.getMonitorType());
+		values.put("online", this.node.getOnline());
 		super.put(DEFAULT_TABLE_NAME, DEFAULT_COLUMN_FAMILY, values);
 	}
 	
-	@Override
-	protected String getServername() {
-		
-		return node.getServerName();
-	}
-
 	@Override
 	protected String rowkeyGenerator(String serverName, String key) {
 		

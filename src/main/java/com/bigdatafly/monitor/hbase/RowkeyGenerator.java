@@ -3,9 +3,6 @@
  */
 package com.bigdatafly.monitor.hbase;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 /**
  * @author summer
  * servername-yyyymmddHHmmss
@@ -18,27 +15,20 @@ public class RowkeyGenerator {
 	
 	public String rowkey(){
 		
-		return serverName+"$"+monitorType+""+getTimestamp();
+		return monitorType+""+timeStamp;
 	}
-	
-	private String serverName;
 	
 	public String monitorType;
-	
-	
-	public RowkeyGenerator setServerName(String serverName){
-		this.serverName = serverName;
-		return this;
-	}
+	private String timeStamp;
 	
 	public RowkeyGenerator setMonitorType(String monitorType){
 		this.monitorType = monitorType;
 		return this;
 	}
 	
-	public static String getTimestamp(){
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
-		return sdf.format(new Date());
+	public RowkeyGenerator setTimestamp(String timeStamp){
+		this.timeStamp = timeStamp;
+		return this;
 	}
 	
 	private RowkeyGenerator(){

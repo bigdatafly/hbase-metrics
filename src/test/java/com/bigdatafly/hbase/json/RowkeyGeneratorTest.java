@@ -16,6 +16,6 @@ public class RowkeyGeneratorTest {
 	@Test
 	public void timestampTest(){
 		
-		System.out.println(RowkeyGenerator.getTimestamp());
+		//System.out.println(RowkeyGenerator.getTimestamp());
 	}
 }

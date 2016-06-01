@@ -17,15 +17,15 @@ public class MonitorDataOperator extends HbaseOperator{
 	
 	public static final String DEFAULT_TABLE_NAME = "hbase_monitor_data";
 	public static final String DEFAULT_COLUMN_FAMILY = "mdf";
-	private String serverName;
+	private String timeStamp;
 	
 	public MonitorDataOperator(HbaseMonitorConfiguration conf){
 		
 		super(conf);
 	}
 	
-	public void put(String serverName,Map<String,Object> values) throws IOException{
-		this.serverName = serverName;
+	public void put(String timeStamp,Map<String,Object> values) throws IOException{
+		this.timeStamp = timeStamp;
 		super.put(DEFAULT_TABLE_NAME, DEFAULT_COLUMN_FAMILY, values);
 	}
 
@@ -37,17 +37,17 @@ public class MonitorDataOperator extends HbaseOperator{
 		super.dropTable(DEFAULT_TABLE_NAME);
 	}
 	@Override
-	protected String getServername() {
+	protected String getTimestamp() {
 		
-		return this.serverName;
+		return this.timeStamp;
 	}
 
 	@Override
-	protected String rowkeyGenerator(String serverName, String key) {
+	protected String rowkeyGenerator(String timestamp, String key) {
 	
 		return rowkeyGenerator
 				.setMonitorType(key)
-				.setServerName(serverName)
+				.setTimestamp(timestamp)
 				.rowkey();
 	}
 	

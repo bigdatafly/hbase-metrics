@@ -84,7 +84,7 @@ public abstract class HbaseOperator {
 				String key = e.getKey();
 				key = JmxQueryConstants.getMonitorTypeByItem(key);
 				Object value = e.getValue();
-				String rowkey = rowkeyGenerator(getServername(),key);
+				String rowkey = rowkeyGenerator(getTimestamp(),key);
 				Put put = serializer(rowkey,family,key,value);
 				puts.add(put);
 			}
@@ -101,7 +101,7 @@ public abstract class HbaseOperator {
 	}
 	
 
-	protected String getServername() {
+	protected String getTimestamp() {
 		
 		return null;
 	}
@@ -123,7 +123,7 @@ public abstract class HbaseOperator {
 		return put;
 	}
 	*/
-	protected abstract String rowkeyGenerator(String serverName,String key);
+	protected abstract String rowkeyGenerator(String timeStamp,String key);
 	
 	protected void createTable(String tableName,String family){
 		

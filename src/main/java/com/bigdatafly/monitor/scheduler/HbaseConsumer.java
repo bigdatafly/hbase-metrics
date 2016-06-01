@@ -99,11 +99,12 @@ public class HbaseConsumer implements Consumer{
 			
 			StringMessage stringMsg = (StringMessage)msg;
 			String serverName = stringMsg.getResource();
+			String timeStamp = stringMsg.getId();
 			String body = stringMsg.getBody();
 			Beans beans = MessageParser.jmxMessageParse(body);
 			Map<String,Object> performancesIndex = MessageParser.getParamters(beans, JmxQueryConstants.REGION_SERVER_PERFORMANCES_INDEX);
 			try {
-				hbaseOperator.put(serverName,performancesIndex);
+				hbaseOperator.put(timeStamp,performancesIndex);
 			} catch (IOException e) {
 				
 				logger.error("insert into hbase fail",e);

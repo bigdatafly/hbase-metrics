@@ -73,7 +73,7 @@ public class MasterCallback extends DefaultCallback{
 			node.setMonitorType(ServerNode.SLAVE_MONITOR_TYPE);
 			node.setOnline("1");
 			try {
-				serverNodeOperator.put(serverName, node);
+				serverNodeOperator.put(node);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -88,7 +88,7 @@ public class MasterCallback extends DefaultCallback{
 			node.setMonitorType(ServerNode.SLAVE_MONITOR_TYPE);
 			node.setOnline("0");
 			try {
-				serverNodeOperator.put(serverName, node);
+				serverNodeOperator.put(node);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
