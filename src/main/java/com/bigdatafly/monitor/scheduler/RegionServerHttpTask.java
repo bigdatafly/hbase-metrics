@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 import com.bigdatafly.monitor.exception.PageNotFoundException;
 import com.bigdatafly.monitor.http.HbaseJmxQuery;
 import com.bigdatafly.monitor.messages.Message;
+import com.bigdatafly.monitor.messages.ProtocolConstants;
 import com.bigdatafly.monitor.serialization.Deserializer;
 
 /**
@@ -60,7 +61,7 @@ public class RegionServerHttpTask extends AbstractHttpTask{
 				try{
 					html = fetcher.fetcher(url);
 					if(this.deserializer!=null && !StringUtils.isEmpty(html))
-						msgs.add(deserializer.deserialize(this.url,regionServer,this,html));
+						msgs.add(deserializer.deserialize(regionServer,this.url,ProtocolConstants.PROTOCOL_HEADER_MODEL_HBASE,html));
 				}catch(PageNotFoundException ex){
 					/*
 					if(curr == size)

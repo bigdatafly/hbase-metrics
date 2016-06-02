@@ -9,6 +9,7 @@ import java.util.List;
 import org.springframework.util.StringUtils;
 
 import com.bigdatafly.monitor.messages.Message;
+import com.bigdatafly.monitor.messages.ProtocolConstants;
 import com.bigdatafly.monitor.serialization.Deserializer;
 
 /**
@@ -46,7 +47,7 @@ public class MasterHttpTask extends AbstractHttpTask{
 		
 		String html = super.getHtml(url);
 		if(this.deserializer!=null && !StringUtils.isEmpty(html))
-				msgs.add(deserializer.deserialize(this.url,"",this,html));
+				msgs.add(deserializer.deserialize("",this.url,ProtocolConstants.PROTOCOL_HEADER_MODEL_HBASE,html));
 
 		return msgs;
 	}

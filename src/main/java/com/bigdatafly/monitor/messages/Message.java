@@ -3,19 +3,22 @@
  */
 package com.bigdatafly.monitor.messages;
 
+import java.util.Map;
+
 /**
  * @author summer
  *
  */
 public interface Message {
 
-	Object getSource();
+	//Object getSource();
 	
-	Object getTarget();
+	//Object getTarget();
 	
-	String getResource();
+	//String getResource();
 	
 	String getBody();
 	
-	String getId();
+	//String getId();
+	Map<String,String> getHeader(); 
 }

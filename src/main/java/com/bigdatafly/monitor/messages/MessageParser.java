@@ -27,6 +27,11 @@ public class MessageParser {
 		return JsonUtils.fromJson(json, Beans.class);
 	}
 
+	public static List<Map<String,Object>> jmxMessageParse2(final String json){
+		Beans beans =   JsonUtils.fromJson(json, Beans.class);
+		return beans.getBeans();
+	}
+	
 	public static List<String> getLiveRegionServerFromJmxMessage(Beans beans){
 		
 		List<String> result= new ArrayList<String>();

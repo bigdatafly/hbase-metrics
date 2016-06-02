@@ -117,7 +117,7 @@ public class SchedulerManager {
 					public <T extends Message> void handler(T msg) {
 						if(msg instanceof StringMessage){
 							StringMessage stringMsg = (StringMessage)msg;
-							stringMsg.setResource(master);
+							stringMsg.setSource(master);
 							MessageQueue.offer(stringMsg);
 						}
 						/*
@@ -168,11 +168,11 @@ public class SchedulerManager {
 
 		this.builder = Builder.builder();
 		
-		this.hbaseOperator = new MonitorDataOperator(this.config);
+		this.monitorItemOperator = new MonitorItemOperator(this.config);
+		
+		this.hbaseOperator = new MonitorDataOperator(this.config,monitorItemOperator);
 		
 		this.serverNodeOperator = new ServerNodeOperator(this.config);
-		
-		this.monitorItemOperator = new MonitorItemOperator(this.config);
 		
 		this.messageConsumer = new HbaseConsumer(hbaseOperator);
 		

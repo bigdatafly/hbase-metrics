@@ -32,15 +32,9 @@ public class ServerNodeOperator extends HbaseOperator{
 		values.put("serverName", this.node.getServerName());
 		values.put("monitorType", this.node.getMonitorType());
 		values.put("online", this.node.getOnline());
-		super.put(DEFAULT_TABLE_NAME, DEFAULT_COLUMN_FAMILY, values);
+		super.put(DEFAULT_TABLE_NAME, DEFAULT_COLUMN_FAMILY,this.node.getServerName(), values);
 	}
 	
-	@Override
-	protected String rowkeyGenerator(String serverName, String key) {
-		
-		return serverName;
-	}
-
 
 	protected void createTable() {
 		

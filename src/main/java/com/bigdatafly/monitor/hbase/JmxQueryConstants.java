@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.storm.shade.com.google.common.collect.Sets;
-import org.apache.storm.shade.org.apache.commons.lang.StringUtils;
 
 import com.google.common.collect.Maps;
 
@@ -20,6 +19,11 @@ public class JmxQueryConstants {
 	public static final String PROJECT_HBASE = "1";
 	public static final String PROJECT_STORM = "2";
 	
+	public static final String PROJECT_HBASE_NAME="hbase";
+	public static final String PROJECT_STORM_NAME="storm";
+	public static final String MODEL_NAME="modeName";
+	public static final String SERVER_NODE_NAME = "serverNode";
+	public static final String TIME_STAMP = "timeStamp";
 	
 	
 	
@@ -71,6 +75,9 @@ public class JmxQueryConstants {
 
 	public static final Set<String> MASTER_PERFORMANCES_INDEX = Sets.newHashSet
 			(new String[]{
+					MODEL_NAME,
+					SERVER_NODE_NAME,
+					TIME_STAMP,
 					LIVE_REGION_SERVERS_TAG,
 					clusterId,
 					liveRegionServers,
@@ -84,16 +91,16 @@ public class JmxQueryConstants {
 					numRegionServers,
 					numDeadRegionServers
 					});
-	public static final Map<String,String> PERFORMANCES_MAP = Maps.newHashMap();
-	
+	public static final Map<String,Integer> PERFORMANCES_MAP = Maps.newHashMap();
+	/*
 	static{
 	
 		for(String PERFORMANCES_INDEX:MASTER_PERFORMANCES_INDEX){
 			PERFORMANCES_MAP.put(PERFORMANCES_INDEX, MASTER_MONITOR_TYPE+StringUtils.leftPad(String.valueOf(PERFORMANCES_MAP.size()+1), 3,"0") );
 		}
 	}
-	
-	public static synchronized String getMonitorTypeByItem(String item){
+	*/
+	public static synchronized Integer getMonitorTypeByItem(String item){
 		return PERFORMANCES_MAP.get(item);
 	}
 	
@@ -113,6 +120,9 @@ public class JmxQueryConstants {
 
 	public static final Set<String> REGION_SERVER_PERFORMANCES_INDEX = Sets.newHashSet
 			(new String[]{
+					MODEL_NAME,
+					SERVER_NODE_NAME,
+					TIME_STAMP,
 					totalRequestCount,
 					readRequestCount,
 					writeRequestCount,
@@ -124,7 +134,7 @@ public class JmxQueryConstants {
 					regionCount
 					});
 	//public static final Map<String,String> REGION_SERVER_PERFORMANCES_MAP = Maps.newHashMap();
-	
+	/*
 	static{
 	
 		for(String PERFORMANCES_INDEX:REGION_SERVER_PERFORMANCES_INDEX){

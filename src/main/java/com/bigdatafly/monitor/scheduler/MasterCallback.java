@@ -5,8 +5,6 @@ package com.bigdatafly.monitor.scheduler;
 
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.bigdatafly.monitor.hbase.MonitorItemOperator;
@@ -58,12 +56,12 @@ public class MasterCallback extends DefaultCallback{
 			}
 			
 			//
-			refreshRegionServer(beans);
+			//refreshRegionServer(beans);
 		}						
 		
 	}
 	
-	private void refreshRegionServer(Beans beans){
+	protected void refreshRegionServer(Beans beans){
 		
 		Set<String> newLiveRegionServers = Sets.newHashSet(MessageParser.getLiveRegionServerFromJmxMessage(beans));
 		
@@ -93,14 +91,6 @@ public class MasterCallback extends DefaultCallback{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
-	}
-	
-	private void refreshMonitorItem(Beans beans){
-		
-		List<Map<String,Object>> items = beans.getBeans();
-		for(Map<String,Object> item:items){
-			
 		}
 	}
 

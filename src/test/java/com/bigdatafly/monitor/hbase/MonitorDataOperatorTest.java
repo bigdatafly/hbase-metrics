@@ -3,6 +3,7 @@
  */
 package com.bigdatafly.monitor.hbase;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,7 +23,7 @@ public class MonitorDataOperatorTest {
 		hbaseOperator = new MonitorDataOperator(conf);
 	}
 	
-	@Test
+	@After
 	public void createTableTest(){
 		hbaseOperator.createTable();
 	}

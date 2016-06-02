@@ -3,7 +3,10 @@
  */
 package com.bigdatafly.monitor.messages;
 
+import java.util.Map;
+
 import com.bigdatafly.utils.DateUtils;
+import com.google.common.collect.Maps;
 
 /**
  * @author summer
@@ -12,27 +15,33 @@ import com.bigdatafly.utils.DateUtils;
 public class StringMessage implements Message{
 
 	private String body;
-	private Object target;
-	private Object source;//存放 servername
-	private String resource;//存放URL
-	private String id;
+	//private Object model;//存放工程名称
+	//private Object source;//存放 servername
+	//private String resource;//存放URL
+	//private String id;
 	
-	public StringMessage(Object source,String resource,Object target,String body){
-		this.source = source;
-		this.target = target;
-		this.body = body;
-		this.resource = resource;
-		this.id = DateUtils.getTimestamp();
-	}
+	Map<String,String> header;
 	
 	public StringMessage(String body){
 		
 		this("","",body);
 	} 
-	
-	public StringMessage(Object source,String resource,String body){
+
+	public StringMessage(String source,String resource,String body){
 		this(source, resource,null,body);
 	}
+	
+	public StringMessage(String source,String resource,String model,String body){
+		
+		this.header = Maps.newHashMap();
+		this.header.put(ProtocolConstants.PROTOCOL_HEADER_SERVER_NODE_NAME, source);
+		this.header.put(ProtocolConstants.PROTOCOL_HEADER_MODEL_NAME, model);
+		this.header.put(ProtocolConstants.PROTOCOL_HEADER_RESOURCE, resource);
+		this.header.put(ProtocolConstants.PROTOCOL_HEADER_TIME_STAMP, DateUtils.getTimestamp());
+		this.body = body;
+
+	}
+
 	
 	public String getBody() {
 		return body;
@@ -42,57 +51,66 @@ public class StringMessage implements Message{
 		this.body = body;
 	}
 
-	@Override
-	public Object getSource() {
-		
-		return this.source;
-	}
 
-	@Override
-	public Object getTarget() {
+
+
+	public String getModel() {
 		
-		return target;
+		return this.header.get(ProtocolConstants.PROTOCOL_HEADER_MODEL_NAME);
 	}
 
 	
-	public void setTarget(Object target) {
-		this.target = target;
+	public void setModel(String model) {
+		this.header.put(ProtocolConstants.PROTOCOL_HEADER_MODEL_NAME, model);
 	}
 
-	public void setSource(Object source) {
-		this.source = source;
+	public String getSource() {
+		
+		return this.header.get(ProtocolConstants.PROTOCOL_HEADER_SERVER_NODE_NAME);
+	}
+	
+	public void setSource(String source) {
+		this.header.put(ProtocolConstants.PROTOCOL_HEADER_SERVER_NODE_NAME, source);
+		
 	}
 
 	public void setResource(String resource) {
-		this.resource = resource;
+		
+		this.header.put(ProtocolConstants.PROTOCOL_HEADER_RESOURCE, resource);
+		
 	}
 
+
+
+	public String getResource() {
+		
+		return this.header.get(ProtocolConstants.PROTOCOL_HEADER_RESOURCE);
+	}
+
+
+	public String getTimestamp() {
+		
+		return this.header.get(ProtocolConstants.PROTOCOL_HEADER_TIME_STAMP);
+	}
+
+	@Override
+	public Map<String, String> getHeader() {
+		
+		return this.header;
+	}
+	
 	@Override
 	public String toString() {
 		
 		StringBuffer sb = new StringBuffer();
 		sb.append("{");
-		sb.append("id:"+id+",");
-		sb.append("source:"+source+",");
-		sb.append("resource:"+resource+",");
-		sb.append("target:"+target+",");
-		sb.append("body:"+body);
+		sb.append("timestamp:"+getTimestamp()+",");
+		sb.append("source:"+getSource()+",");
+		sb.append("resource:"+getResource()+",");
+		sb.append("model:"+getModel()+",");
+		sb.append("body:"+getBody());
 		sb.append("}");
 		return sb.toString();
 	}
-
-	@Override
-	public String getResource() {
-		
-		return this.resource;
-	}
-
-	@Override
-	public String getId() {
-		
-		return this.id;
-	}
-	
-	
 	
 }

@@ -3,10 +3,7 @@
  */
 package com.bigdatafly.monitor.hbase;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,31 +24,15 @@ public class MonitorItemOperatorTest {
 		hbaseOperator = new MonitorItemOperator(conf);
 	}
 	
-	
+	@After
 	public void createTableTest(){
 		hbaseOperator.createTable();
 	}
 	
- 
+	@Test
 	public void dropTableTest(){
 		hbaseOperator.dropTable();
 	}
 	
-	@Test 
-	public void insertMonitorItems(){
-		
-		dropTableTest();
-		createTableTest();
-		
-		Map<String,Object> monitorItems = new HashMap<>();
-		for(Map.Entry<String, String> e : JmxQueryConstants.PERFORMANCES_MAP.entrySet()){
-			monitorItems.put(e.getKey(), e.getValue());
-		}
-		try {
-			hbaseOperator.put(monitorItems);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-	}
+	
 }

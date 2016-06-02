@@ -21,7 +21,7 @@ public class SchedulerManagerBean implements InitializingBean,DisposableBean{
 
 	SchedulerManager schedulerManager;
 	
-	//@PreDestroy
+	/////////@PreDestroy
 	@Override
 	public void destroy() throws Exception {
 		

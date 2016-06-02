@@ -6,7 +6,10 @@ package com.bigdatafly.monitor.hbase;
 import java.io.IOException;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.bigdatafly.monitor.configurations.HbaseMonitorConfiguration;
+import com.bigdatafly.monitor.messages.ProtocolConstants;
 import com.google.common.collect.Maps;
 
 /**
@@ -17,15 +20,16 @@ public class MonitorItemOperator extends HbaseOperator{
 
 	public static final String DEFAULT_TABLE_NAME = "hbase_monitor_item";
 	public static final String DEFAULT_COLUMN_FAMILY = "micf";
+	public static final Map<String,String> PERFORMANCES_MAP = Maps.newHashMap();
 	
 	public MonitorItemOperator(HbaseMonitorConfiguration conf) {
 		super(conf);
 		
 	}
 	
-	public void put(Map<String, Object> values) throws IOException {
+	public void put(String rowkey,String value) throws IOException {
 		
-		super.put(DEFAULT_TABLE_NAME, DEFAULT_COLUMN_FAMILY, values);
+		super.put(DEFAULT_TABLE_NAME, DEFAULT_COLUMN_FAMILY, rowkey,rowkey,value);
 	}
 	
 	public void createTable() {
@@ -37,31 +41,27 @@ public class MonitorItemOperator extends HbaseOperator{
 		super.dropTable(DEFAULT_TABLE_NAME);
 	}
 
-	@Override
-	protected String rowkeyGenerator(String serverName, String key) {
-		
-		return key;
-	}
-
-	public Map<String,String> findAll(){
-		
-		try {
-			return super.findAll(DEFAULT_TABLE_NAME, DEFAULT_COLUMN_FAMILY);
-		} catch (IOException e) {
-			
-			return Maps.newHashMap();
+	public String getMonitorItem(String mode,String key){
+		String itemKey = mode+"$"+key;
+		String itemVal = "0000";
+		long val = 0;
+		if(PERFORMANCES_MAP.containsKey(itemKey))
+			itemVal =  PERFORMANCES_MAP.get(itemKey);
+		else{
+			try {
+				val = super.increment(DEFAULT_TABLE_NAME,DEFAULT_COLUMN_FAMILY, "incrzhuxh","incr",1);
+				String modelCode = ProtocolConstants.getModelCode(mode);
+				itemVal = modelCode+StringUtils.leftPad(String.valueOf(val),3,"0");
+				put(itemKey,itemVal);
+				PERFORMANCES_MAP.put(itemKey, itemVal);
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally{
+				
+			}
 		}
-	}
-	
-	public boolean exists(String keyrow){
 		
-		try {
-			return exists(DEFAULT_TABLE_NAME,keyrow);
-		} catch (IOException e) {
-			return false;
-		}
-	}
-	
-	
+		return itemVal;
+	}	
 	
 }

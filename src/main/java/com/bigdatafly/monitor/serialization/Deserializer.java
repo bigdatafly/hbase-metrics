@@ -11,5 +11,5 @@ import com.bigdatafly.monitor.messages.Message;
  */
 public interface Deserializer<T extends Message> {
 
-	public T deserialize(Object source,String resource,Object target,String body); 
+	public T deserialize(String source,String resource,String model,String body); 
 }

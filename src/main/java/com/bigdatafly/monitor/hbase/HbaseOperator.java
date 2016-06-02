@@ -18,7 +18,6 @@ import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Admin;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
-import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
@@ -55,18 +54,6 @@ public abstract class HbaseOperator {
 		 return hbaseConfig;
 	}
 	
-	/*
-	 * 
-	 *  Connection connection = ConnectionFactory.createConnection(conf);
-   * Table table = connection.getTable(TableName.valueOf("mytable"));
-   * try {
-   *   table.get(...);
-   *   ...
-   * } finally {
-   *   table.close();
-   *   connection.close();
-   * }
-	 */
 	
 	protected Connection createConnection() throws IOException{
 		User user = User.createUserForTesting(hbaseConfig, "hadoop",new String[]{"hadoop"});
@@ -74,7 +61,64 @@ public abstract class HbaseOperator {
 		return connection;
 	}
 	
-	protected void put(String tableName,String family,Map<String,Object> values) throws IOException{
+	protected void put(String tableName,String family,Map<String,Map<String,Object>> values){
+		
+		for(Map.Entry<String, Map<String,Object>> e:values.entrySet()){
+			String rowkey = e.getKey();
+			Map<String,Object> value = e.getValue();
+			try{
+				put(tableName,family,rowkey,value);
+			}catch(Exception ex){
+				//ex.printStackTrace();
+			}
+		}
+			
+	}
+	
+	protected void put(String tableName,String family,String rowkey,String qualifier,Object value) throws IOException{
+		
+		
+		Table table = null;
+		try(Connection connection = createConnection()){
+			table = connection.getTable(TableName.valueOf(tableName));
+			Put put = serializer(rowkey,family,qualifier,value);
+			table.put(put);
+		}catch(IOException ex){
+			ex.printStackTrace();
+		}finally{
+			if(table != null)
+				try {
+					table.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+		
+	}
+	
+	protected long increment(String tableName,String family,String rowkey,String qualifier,long amount){
+		
+		long val = 0;
+		Table table = null;
+		try(Connection connection = createConnection()){
+			table = connection.getTable(TableName.valueOf(tableName));
+			val = table.incrementColumnValue(Bytes.toBytes(rowkey),
+					Bytes.toBytes(family), Bytes.toBytes(qualifier), amount);
+		}catch(IOException ex){
+			ex.printStackTrace();
+		}finally{
+			if(table != null)
+				try {
+					table.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+		}
+		return val;
+	}
+	
+	protected void put(String tableName,String family,String rowkey,Map<String,Object> values) throws IOException{
 		
 		Table table = null;
 		try(Connection connection = createConnection()){
@@ -82,9 +126,8 @@ public abstract class HbaseOperator {
 			List<Put> puts = new ArrayList<Put>();
 			for(Map.Entry<String,Object> e : values.entrySet()){
 				String key = e.getKey();
-				key = JmxQueryConstants.getMonitorTypeByItem(key);
+				//key = JmxQueryConstants.getMonitorTypeByItem(key);
 				Object value = e.getValue();
-				String rowkey = rowkeyGenerator(getTimestamp(),key);
 				Put put = serializer(rowkey,family,key,value);
 				puts.add(put);
 			}
@@ -99,13 +142,6 @@ public abstract class HbaseOperator {
 		
 		
 	}
-	
-
-	protected String getTimestamp() {
-		
-		return null;
-	}
-
 	
 	protected Put serializer(String rowkey,String family,String qualifier,Object value){
 		Put put = new Put(Bytes.toBytes(rowkey));
@@ -123,7 +159,6 @@ public abstract class HbaseOperator {
 		return put;
 	}
 	*/
-	protected abstract String rowkeyGenerator(String timeStamp,String key);
 	
 	protected void createTable(String tableName,String family){
 		
@@ -170,6 +205,11 @@ public abstract class HbaseOperator {
 		}
 	}
 
+	protected Map<String,Map<String,Object>> convert(List<Map<String,Object>> map){
+		
+		return null;
+	}
+	
 	public Map<String,String> findAll(final String tableName, final String family) throws IOException{
 		
 		Map<String,String> rs = Maps.newHashMap();
@@ -197,22 +237,6 @@ public abstract class HbaseOperator {
 		
 		return rs;
 		
-	}
-
-	public boolean exists(String tableName, String keyrow) throws IOException{
-		
-		Table table = null;
-		try(Connection connection = createConnection()){
-			table = connection.getTable(TableName.valueOf(tableName));
-			Get get = new Get(Bytes.toBytes(keyrow));
-			return table.exists(get);
-			
-		}catch(IOException ex){
-			throw ex;
-		}finally{
-			if(table != null)
-				table.close();
-		}
 	}
 	
 }

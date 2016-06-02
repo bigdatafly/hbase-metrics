@@ -13,8 +13,8 @@ public class StringDeserializer implements Deserializer<StringMessage>{
 
 	
 	@Override
-	public StringMessage deserialize(Object source,String resource, Object target, String body) {
-		return new StringMessage(source,resource,target,body);
+	public StringMessage deserialize(String source,String resource, String model, String body) {
+		return new StringMessage(source,resource,model,body);
 	}
 
 }
