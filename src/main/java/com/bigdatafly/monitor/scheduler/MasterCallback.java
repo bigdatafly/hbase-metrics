@@ -5,11 +5,11 @@ package com.bigdatafly.monitor.scheduler;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import com.bigdatafly.monitor.hbase.MonitorItemOperator;
 import com.bigdatafly.monitor.hbase.ServerNodeOperator;
-import com.bigdatafly.monitor.hbase.model.Beans;
 import com.bigdatafly.monitor.hbase.model.ServerNode;
 import com.bigdatafly.monitor.messages.Message;
 import com.bigdatafly.monitor.messages.MessageParser;
@@ -38,13 +38,15 @@ public class MasterCallback extends DefaultCallback{
 	public void onMessage(Object target, Message message) {
 		if(message instanceof StringMessage){
 			StringMessage stringMsg = (StringMessage)message;
-			String body = stringMsg.getBody();
-			Beans beans = MessageParser.jmxMessageParse(body);
+			//String body = stringMsg.getBody();
+			//Beans beans = MessageParser.jmxMessageParse(body);
+			Map<String,Object> body = stringMsg.getBody();
 			synchronized(SchedulerManager.regionServerList){
 				Set<String> tempResionServers = new HashSet<String>();
 				tempResionServers.addAll(SchedulerManager.regionServerList);
-				Set<String> newLiveRegionServers = Sets.newHashSet(MessageParser.getLiveRegionServerFromJmxMessage(beans));
-				
+				Set<String> newLiveRegionServers = Sets.newHashSet(MessageParser.getLiveRegionServerFromJmxMessage(body));
+				if(newLiveRegionServers.isEmpty())
+					return;
 				try{
 					SchedulerManager.regionServerList.clear();
 					//newRegionServers.removeAll(SchedulerManager.regionServerList);
@@ -61,7 +63,7 @@ public class MasterCallback extends DefaultCallback{
 		
 	}
 	
-	protected void refreshRegionServer(Beans beans){
+	protected void refreshRegionServer(Map<String,Object> beans){
 		
 		Set<String> newLiveRegionServers = Sets.newHashSet(MessageParser.getLiveRegionServerFromJmxMessage(beans));
 		

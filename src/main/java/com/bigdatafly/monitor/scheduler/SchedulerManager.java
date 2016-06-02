@@ -170,11 +170,11 @@ public class SchedulerManager {
 		
 		this.monitorItemOperator = new MonitorItemOperator(this.config);
 		
-		this.hbaseOperator = new MonitorDataOperator(this.config,monitorItemOperator);
+		this.hbaseOperator = new MonitorDataOperator(this.config);
 		
 		this.serverNodeOperator = new ServerNodeOperator(this.config);
 		
-		this.messageConsumer = new HbaseConsumer(hbaseOperator);
+		this.messageConsumer = new HbaseConsumer(hbaseOperator,monitorItemOperator);
 		
 		if(logger.isDebugEnabled())
 			logger.debug(config.toString());

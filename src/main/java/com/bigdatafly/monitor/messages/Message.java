@@ -17,7 +17,7 @@ public interface Message {
 	
 	//String getResource();
 	
-	String getBody();
+	Map<String,Object> getBody();
 	
 	//String getId();
 	Map<String,String> getHeader(); 

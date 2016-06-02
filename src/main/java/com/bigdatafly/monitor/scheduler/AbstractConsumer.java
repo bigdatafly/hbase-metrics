@@ -4,11 +4,17 @@
 package com.bigdatafly.monitor.scheduler;
 
 import java.util.Deque;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.apache.storm.shade.com.google.common.collect.Maps;
+import org.apache.storm.shade.com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bigdatafly.monitor.exception.HbaseMonitorException;
+import com.bigdatafly.monitor.hbase.JmxQueryConstants;
 import com.bigdatafly.monitor.messages.Message;
 import com.bigdatafly.monitor.mq.MessageQueue;
 import com.google.common.collect.Lists;
@@ -17,7 +23,7 @@ import com.google.common.collect.Lists;
  * @author summer
  *
  */
-public abstract class AbstractConsumer implements Consumer{
+public abstract class AbstractConsumer<T extends Message> implements Consumer{
 
 	private static final Logger logger = LoggerFactory.getLogger(AbstractConsumer.class);
 	
@@ -38,6 +44,7 @@ public abstract class AbstractConsumer implements Consumer{
 		this.stop = false;
 		this.failDiscard = failDiscard;
 		//this.mq = mq;	
+		this.interceptors.add(createDefaultInterceptor());
 	}
 	
 	public void start(){
@@ -108,7 +115,25 @@ public abstract class AbstractConsumer implements Consumer{
 		this.failDiscard = failDiscard;
 	}
 
-	public abstract void consumer(Message msg) throws HbaseMonitorException;
+	public  void consumer(Message msg) throws HbaseMonitorException{
+		for(Interceptor interceptor:interceptors){
+			if(msg!=null)
+				msg = interceptor.intercept(msg);
+		}
+	}
 	
+	protected List<Interceptor> interceptors = Lists.newArrayList();
 	
+	protected Interceptor createDefaultInterceptor(){
+		Set<String> attributes = Sets.newHashSet();
+		attributes.addAll(JmxQueryConstants.MASTER_PERFORMANCES_INDEX);
+		attributes.addAll(JmxQueryConstants.REGION_SERVER_PERFORMANCES_INDEX);
+		return new IncludeInterceptor(attributes);
+	}
+	
+	protected  Map<String,Map<String,Object>> convert( T msg){
+		
+		return Maps.newHashMap();
+	}
+
 }

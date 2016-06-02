@@ -6,7 +6,6 @@ package com.bigdatafly.monitor.scheduler;
 
 import java.util.Set;
 
-import com.bigdatafly.monitor.messages.Message;
 import com.bigdatafly.monitor.serialization.Deserializer;
 
 /**
@@ -16,7 +15,7 @@ import com.bigdatafly.monitor.serialization.Deserializer;
 public class Builder{
 	
 	private Handler handler;
-	private Deserializer<? extends Message> deserializer;
+	private Deserializer deserializer;
 	private Callback callback;
 	private String url;
 	private Set<String> servers;
@@ -54,7 +53,7 @@ public class Builder{
 		return this;
 	}
 	
-	public Builder setSerializer(Deserializer<? extends Message> deserializer) {
+	public Builder setSerializer(Deserializer deserializer) {
 		this.deserializer = deserializer;
 		return this;
 	}

@@ -27,14 +27,14 @@ public class RegionServerHttpTask extends AbstractHttpTask{
 	}
 
 	public RegionServerHttpTask(String url,
-			Deserializer<? extends Message> deserializer, Handler handler,
+			Deserializer deserializer, Handler handler,
 			Callback callback) {
 		super(url, deserializer, handler, callback);
 		
 	}
 
 	public RegionServerHttpTask(String url,
-			Deserializer<? extends Message> deserializer, Handler handler) {
+			Deserializer deserializer, Handler handler) {
 		super(url, deserializer, handler);
 		
 	}
@@ -61,7 +61,7 @@ public class RegionServerHttpTask extends AbstractHttpTask{
 				try{
 					html = fetcher.fetcher(url);
 					if(this.deserializer!=null && !StringUtils.isEmpty(html))
-						msgs.add(deserializer.deserialize(regionServer,this.url,ProtocolConstants.PROTOCOL_HEADER_MODEL_HBASE,html));
+						msgs.addAll(deserializer.deserialize(regionServer,ProtocolConstants.PROTOCOL_HEADER_MODEL_HBASE,"",html));
 				}catch(PageNotFoundException ex){
 					/*
 					if(curr == size)

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.storm.shade.com.google.common.collect.Lists;
 import org.apache.storm.shade.com.google.common.collect.Maps;
 import org.springframework.util.StringUtils;
 
@@ -22,41 +23,44 @@ import com.bigdatafly.utils.JsonUtils;
  */
 public class MessageParser {
 
-	public static Beans jmxMessageParse(final String json){
+	private static Beans jmxMessageParse(final String json){
 		
 		return JsonUtils.fromJson(json, Beans.class);
 	}
 
 	public static List<Map<String,Object>> jmxMessageParse2(final String json){
-		Beans beans =   JsonUtils.fromJson(json, Beans.class);
-		return beans.getBeans();
+		Beans beans =   jmxMessageParse(json);
+		if(beans!=null && beans.getBeans()!=null ){
+			return beans.getBeans();
+		}
+		return Lists.newArrayList();
 	}
 	
-	public static List<String> getLiveRegionServerFromJmxMessage(Beans beans){
+	public static List<String> getLiveRegionServerFromJmxMessage(Map<String,Object> bean){
 		
 		List<String> result= new ArrayList<String>();
-		if(beans!=null && beans.getBeans()!=null && !beans.getBeans().isEmpty()){
-			for(Map<String,Object> bean : beans.getBeans()){
-				String regionServers = bean.get(JmxQueryConstants.LIVE_REGION_SERVERS_TAG)+"";
-				if(!StringUtils.isEmpty(regionServers)){
-					result.addAll(getRegionServerHostname(regionServers));
-				}	
-			}
+		if(bean!=null && bean.containsKey(JmxQueryConstants.LIVE_REGION_SERVERS_TAG)){
+			
+			String regionServers = bean.get(JmxQueryConstants.LIVE_REGION_SERVERS_TAG)+"";
+			if(!StringUtils.isEmpty(regionServers)){
+				result.addAll(getRegionServerHostname(regionServers));
+			}	
+			
 		}
 		
 		return result;
 	}
 	
-	public static List<String> getDeadRegionServerFromJmxMessage(Beans beans){
+	public static List<String> getDeadRegionServerFromJmxMessage(Map<String,Object> bean){
 		
 		List<String> result= new ArrayList<String>();
-		if(beans!=null && beans.getBeans()!=null && !beans.getBeans().isEmpty()){
-			for(Map<String,Object> bean : beans.getBeans()){
+		if(bean!=null && bean.containsKey(JmxQueryConstants.deadRegionServers)){
+			
 				String regionServers = bean.get(JmxQueryConstants.deadRegionServers)+"";
 				if(!StringUtils.isEmpty(regionServers)){
 					result.addAll(getRegionServerHostname(regionServers));
 				}	
-			}
+			
 		}
 		
 		return result;

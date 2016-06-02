@@ -4,7 +4,9 @@
 package com.bigdatafly.hbase.json;
 
 import java.util.List;
+import java.util.Map;
 
+import org.apache.storm.shade.com.google.common.collect.Maps;
 import org.junit.Test;
 import org.mortbay.util.ajax.JSON;
 
@@ -66,10 +68,13 @@ public class JsonTest {
 		
 		System.out.println("*****************regionservers hostname*********************");
 		Beans beans = JsonUtils.fromJson(strJson, Beans.class);
-		List<String> regionServerHosts = MessageParser.getLiveRegionServerFromJmxMessage(beans);
+		Map<String,Object> datas = Maps.newHashMap();
+		for(Map<String,Object> data:beans.getBeans())
+			datas.putAll(data);
+		List<String> regionServerHosts = MessageParser.getLiveRegionServerFromJmxMessage(datas);
 		System.out.println(regionServerHosts);
 		
-		List<String> deadRegionServerHosts = MessageParser.getDeadRegionServerFromJmxMessage(beans);
+		List<String> deadRegionServerHosts = MessageParser.getDeadRegionServerFromJmxMessage(datas);
 		System.out.println(deadRegionServerHosts);
 	}
 

@@ -224,10 +224,7 @@ public abstract class HbaseOperator {
 		}
 	}
 
-	protected Map<String,Map<String,Object>> convert(List<Map<String,Object>> map){
-		
-		return null;
-	}
+	
 	
 	public Map<String,String> findAll(final String tableName, final String family) throws IOException{
 		

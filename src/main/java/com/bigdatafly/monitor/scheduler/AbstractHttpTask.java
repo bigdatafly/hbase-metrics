@@ -6,7 +6,6 @@ package com.bigdatafly.monitor.scheduler;
 import java.util.Set;
 
 import com.bigdatafly.monitor.http.Fetcher;
-import com.bigdatafly.monitor.messages.Message;
 import com.bigdatafly.monitor.serialization.Deserializer;
 /**
  * @author summer
@@ -30,12 +29,12 @@ public abstract class AbstractHttpTask extends AbstractTask implements Task{
 		
 	}
 
-	public AbstractHttpTask(String url,Deserializer<? extends Message> deserializer,Handler handler) {
+	public AbstractHttpTask(String url,Deserializer deserializer,Handler handler) {
 		this(url,deserializer,handler,null);
 		
 	}
 	
-	public AbstractHttpTask(String url,Deserializer<? extends Message> deserializer,Handler handler, Callback callback) {
+	public AbstractHttpTask(String url,Deserializer deserializer,Handler handler, Callback callback) {
 		super(deserializer, handler ,callback);
 		this.url = url;
 	}

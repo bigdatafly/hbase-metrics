@@ -29,7 +29,7 @@ public abstract class AbstractTask implements Task {
 	private boolean started = false;
 
 	protected Handler handler;
-	protected Deserializer<? extends Message> deserializer;
+	protected Deserializer deserializer;
 	protected Callback callback;
 	
 	public AbstractTask(){
@@ -43,12 +43,12 @@ public abstract class AbstractTask implements Task {
 	}
 	
 	
-	public AbstractTask(Deserializer<? extends Message> deserializer,Handler handler){
+	public AbstractTask(Deserializer deserializer,Handler handler){
 		
 		this(deserializer,handler,null);
 	}
 	
-	public AbstractTask(Deserializer<? extends Message> deserializer,Handler handler,Callback callback){
+	public AbstractTask(Deserializer deserializer,Handler handler,Callback callback){
 		
 		this.callback = ((callback == null)?new DefaultCallback():callback);
 		this.deserializer = ((deserializer == null)?new StringDeserializer():deserializer);
@@ -140,7 +140,7 @@ public abstract class AbstractTask implements Task {
 	}
 
 	@Override
-	public Task setDeserializer(Deserializer<? extends Message> deserializer) {
+	public Task setDeserializer(Deserializer deserializer) {
 		this.deserializer = deserializer;
 		return this;
 	}

@@ -14,7 +14,7 @@ import com.google.common.collect.Maps;
  */
 public class StringMessage implements Message{
 
-	private String body;
+	private Map<String,Object> body;
 	//private Object model;//存放工程名称
 	//private Object source;//存放 servername
 	//private String resource;//存放URL
@@ -22,16 +22,16 @@ public class StringMessage implements Message{
 	
 	Map<String,String> header;
 	
-	public StringMessage(String body){
+	public StringMessage(Map<String,Object> body){
 		
 		this("","",body);
 	} 
 
-	public StringMessage(String source,String resource,String body){
+	public StringMessage(String source,String resource,Map<String,Object> body){
 		this(source, resource,null,body);
 	}
 	
-	public StringMessage(String source,String resource,String model,String body){
+	public StringMessage(String source,String resource,String model,Map<String,Object> body){
 		
 		this.header = Maps.newHashMap();
 		this.header.put(ProtocolConstants.PROTOCOL_HEADER_SERVER_NODE_NAME, source);
@@ -43,11 +43,11 @@ public class StringMessage implements Message{
 	}
 
 	
-	public String getBody() {
+	public Map<String,Object> getBody() {
 		return body;
 	}
 
-	public void setBody(String body) {
+	public void setBody(Map<String,Object> body) {
 		this.body = body;
 	}
 

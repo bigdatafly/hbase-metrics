@@ -23,13 +23,13 @@ public class MasterHttpTask extends AbstractHttpTask{
 		// TODO Auto-generated constructor stub
 	}
 
-	public MasterHttpTask(String url, Deserializer<? extends Message> serializer,
+	public MasterHttpTask(String url, Deserializer serializer,
 			Handler handler, Callback callback) {
 		super(url, serializer, handler, callback);
 		// TODO Auto-generated constructor stub
 	}
 
-	public MasterHttpTask(String url, Deserializer<? extends Message> serializer,
+	public MasterHttpTask(String url, Deserializer serializer,
 			Handler handler) {
 		super(url, serializer, handler);
 		// TODO Auto-generated constructor stub
@@ -47,7 +47,7 @@ public class MasterHttpTask extends AbstractHttpTask{
 		
 		String html = super.getHtml(url);
 		if(this.deserializer!=null && !StringUtils.isEmpty(html))
-				msgs.add(deserializer.deserialize("",this.url,ProtocolConstants.PROTOCOL_HEADER_MODEL_HBASE,html));
+				msgs.addAll(deserializer.deserialize("",ProtocolConstants.PROTOCOL_HEADER_MODEL_HBASE,"",html));
 
 		return msgs;
 	}
