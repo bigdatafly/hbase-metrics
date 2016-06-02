@@ -18,7 +18,7 @@ public class StringMessage implements Message{
 	//private Object model;//存放工程名称
 	//private Object source;//存放 servername
 	//private String resource;//存放URL
-	//private String id;
+	//private String timestamp;
 	
 	Map<String,String> header;
 	

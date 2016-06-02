@@ -59,7 +59,7 @@ public class MonitorDataOperator extends HbaseOperator{
 			String serverNode  = datas.remove(ProtocolConstants.PROTOCOL_HEADER_SERVER_NODE_NAME).toString();
 			String urlresource  = datas.remove(ProtocolConstants.PROTOCOL_HEADER_RESOURCE).toString();
 			//转码
-			serverNode = getMonitorItem(modeName,serverNode);
+			serverNode = getMonitorServerItem(modeName,serverNode);
 			for(Map.Entry<String,Object> e:datas.entrySet()){
 				
 				String attribute = e.getKey();
@@ -82,6 +82,10 @@ public class MonitorDataOperator extends HbaseOperator{
 	private String getMonitorItem(String mode,String key){
 		
 		return monitorItemOperator.getMonitorItem(mode, key);
+	}
+	
+	private String getMonitorServerItem(String mode,String key){
+		return monitorItemOperator.getMonitorServerItem(mode, key);
 	}
 	
 	protected String rowkeyGenerator(String key,String timestamp) {

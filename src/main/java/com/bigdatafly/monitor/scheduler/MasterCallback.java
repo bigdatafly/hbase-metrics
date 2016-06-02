@@ -41,7 +41,7 @@ public class MasterCallback extends DefaultCallback{
 			String body = stringMsg.getBody();
 			Beans beans = MessageParser.jmxMessageParse(body);
 			synchronized(SchedulerManager.regionServerList){
-				Set<String> tempResionServers = new HashSet<>();
+				Set<String> tempResionServers = new HashSet<String>();
 				tempResionServers.addAll(SchedulerManager.regionServerList);
 				Set<String> newLiveRegionServers = Sets.newHashSet(MessageParser.getLiveRegionServerFromJmxMessage(beans));
 				

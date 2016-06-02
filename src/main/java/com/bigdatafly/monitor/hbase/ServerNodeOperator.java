@@ -28,7 +28,7 @@ public class ServerNodeOperator extends HbaseOperator{
 	
 	public void put(ServerNode node) throws IOException{
 		this.node = node;
-		Map<String,Object> values = new HashMap<>();
+		Map<String,Object> values = new HashMap<String,Object>();
 		values.put("serverName", this.node.getServerName());
 		values.put("monitorType", this.node.getMonitorType());
 		values.put("online", this.node.getOnline());

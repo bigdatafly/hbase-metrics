@@ -22,7 +22,6 @@ import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Table;
-import org.apache.hadoop.hbase.security.User;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import com.bigdatafly.monitor.configurations.HbaseMonitorConfiguration;
@@ -35,15 +34,17 @@ import com.google.common.collect.Maps;
  */
 public abstract class HbaseOperator {
 
-	Configuration hbaseConfig;
+	static Configuration  hbaseConfig;
 	RowkeyGenerator rowkeyGenerator;
 	HbaseMonitorConfiguration conf;
 
+	static Connection connection;
+	static Object object = new Object();
 	
 	public HbaseOperator(HbaseMonitorConfiguration conf){
 		this.conf = conf;
 		rowkeyGenerator = RowkeyGenerator.builder();
-		this.hbaseConfig = createHBaseConfiguration(conf.getHbaseZookeeperHost(), conf.getHbaseZookeeperPort());
+		hbaseConfig = createHBaseConfiguration(conf.getHbaseZookeeperHost(), conf.getHbaseZookeeperPort());
 	}
 	
 	Configuration createHBaseConfiguration(String zk,int port){
@@ -55,9 +56,14 @@ public abstract class HbaseOperator {
 	}
 	
 	
-	protected Connection createConnection() throws IOException{
-		User user = User.createUserForTesting(hbaseConfig, "hadoop",new String[]{"hadoop"});
-		Connection connection = ConnectionFactory.createConnection(hbaseConfig,user);
+	protected static Connection createConnection() throws IOException{
+		//User user = User.createUserForTesting(hbaseConfig, "hadoop",new String[]{"hadoop"});
+		if(connection == null){
+			synchronized(object){
+				if(connection == null)
+					connection = ConnectionFactory.createConnection(hbaseConfig);
+			}
+		}
 		return connection;
 	}
 	
@@ -79,7 +85,9 @@ public abstract class HbaseOperator {
 		
 		
 		Table table = null;
-		try(Connection connection = createConnection()){
+		Connection connection = null;
+		try{
+			connection = createConnection();
 			table = connection.getTable(TableName.valueOf(tableName));
 			Put put = serializer(rowkey,family,qualifier,value);
 			table.put(put);
@@ -101,7 +109,9 @@ public abstract class HbaseOperator {
 		
 		long val = 0;
 		Table table = null;
-		try(Connection connection = createConnection()){
+		Connection connection = null;
+		try{
+			connection = createConnection();
 			table = connection.getTable(TableName.valueOf(tableName));
 			val = table.incrementColumnValue(Bytes.toBytes(rowkey),
 					Bytes.toBytes(family), Bytes.toBytes(qualifier), amount);
@@ -121,7 +131,9 @@ public abstract class HbaseOperator {
 	protected void put(String tableName,String family,String rowkey,Map<String,Object> values) throws IOException{
 		
 		Table table = null;
-		try(Connection connection = createConnection()){
+		Connection connection = null;
+		try{
+			connection = createConnection();
 			table = connection.getTable(TableName.valueOf(tableName));
 			List<Put> puts = new ArrayList<Put>();
 			for(Map.Entry<String,Object> e : values.entrySet()){
@@ -138,6 +150,7 @@ public abstract class HbaseOperator {
 		}finally{
 			if(table != null)
 				table.close();
+			
 		}
 		
 		
@@ -163,7 +176,9 @@ public abstract class HbaseOperator {
 	protected void createTable(String tableName,String family){
 		
 		Admin admin = null;
-		try(Connection connection = createConnection()){
+		Connection connection  = null;
+		try{
+			connection = createConnection();
 			admin = connection.getAdmin();
 			if(!admin.tableExists(TableName.valueOf(tableName))){
 				HTableDescriptor tableDescriptor = new HTableDescriptor(TableName.valueOf(tableName));
@@ -181,12 +196,15 @@ public abstract class HbaseOperator {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+			
 		}
 	}
 	
 	protected void dropTable(String tableName){
 		Admin admin = null;
-		try(Connection connection = createConnection()){
+		Connection connection  = null;
+		try{
+			connection = createConnection();
 			admin = connection.getAdmin();
 			if(admin.tableExists(TableName.valueOf(tableName)) && admin.isTableEnabled(TableName.valueOf(tableName))){
 				admin.disableTable(TableName.valueOf(tableName));
@@ -202,6 +220,7 @@ public abstract class HbaseOperator {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+			
 		}
 	}
 
@@ -214,7 +233,9 @@ public abstract class HbaseOperator {
 		
 		Map<String,String> rs = Maps.newHashMap();
 		Table table = null;
-		try(Connection connection = createConnection()){
+		Connection connection = null;
+		try{
+			connection = createConnection();
 			table = connection.getTable(TableName.valueOf(tableName));
 			ResultScanner scanner = table.getScanner(Bytes.toBytes(family));
 			String key;
@@ -233,6 +254,7 @@ public abstract class HbaseOperator {
 		}finally{
 			if(table != null)
 				table.close();
+			
 		}
 		
 		return rs;
