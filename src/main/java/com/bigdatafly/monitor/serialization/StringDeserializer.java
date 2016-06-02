@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.storm.shade.com.google.common.collect.Lists;
 
 import com.bigdatafly.monitor.messages.MessageParser;
+import com.bigdatafly.monitor.messages.ProtocolConstants;
 import com.bigdatafly.monitor.messages.StringMessage;
 
 /**
@@ -17,7 +18,6 @@ import com.bigdatafly.monitor.messages.StringMessage;
  */
 public class StringDeserializer implements Deserializer{
 
-	public static final String MODEL_TAG = "name";
 	//public static final String 
 	/**
 	 * @param source serverName hbase:servername storm:storm 或者 servername
@@ -32,8 +32,8 @@ public class StringDeserializer implements Deserializer{
 		List<StringMessage> messages = Lists.newArrayList();
 		if(map!=null){
 			for(Map<String,Object> messageBody:map){
-				if(messageBody.containsKey(MODEL_TAG)){
-					strmodel = messageBody.remove(MODEL_TAG).toString();
+				if(messageBody.containsKey(ProtocolConstants.MODEL_TAG)){
+					strmodel = messageBody.remove(ProtocolConstants.MODEL_TAG).toString();
 				}
 				messages.add(new StringMessage(source,resource,strmodel,messageBody));
 			}

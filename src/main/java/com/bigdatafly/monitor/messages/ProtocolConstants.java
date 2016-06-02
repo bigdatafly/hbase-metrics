@@ -22,7 +22,7 @@ public class ProtocolConstants {
 	 * 内容
 	 * body
 	 */
-	
+	public static final String MODEL_TAG = "name";
 
 	//public static final String PROTOCOL_HEADER_PROJECT_NAME="projectName"; //目前就2种
 	public static final String PROTOCOL_HEADER_MODEL_NAME="modeName";

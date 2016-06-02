@@ -78,16 +78,17 @@ public class HbaseConsumer extends AbstractConsumer<StringMessage> implements Co
 	@Override
 	protected Map<String,Map<String,Object>> convert(StringMessage msg) {
 		
-		Map<String,String> header = msg.getHeader();
+		//Map<String,String> header = msg.getHeader();
 		Map<String,Object> protocolData = msg.getBody();
 		Map<String,Map<String,Object>> monitorData = Maps.newHashMap();
 		
 		//for(Map<String,Object> datas:protocolData){
 			//去掉协议头
 			String timestamp = msg.getTimestamp();
-			String modeName  = msg.getModel();
+			//String modeName  = msg.getModel();
 			String serverNode  = msg.getSource();
-			String urlresource  = msg.getResource();
+			//String resource  = msg.getResource();
+			String modeName = msg.getResource();
 			//转码
 			serverNode = getMonitorServerItem(modeName,serverNode);
 			for(Map.Entry<String,Object> e:protocolData.entrySet()){
