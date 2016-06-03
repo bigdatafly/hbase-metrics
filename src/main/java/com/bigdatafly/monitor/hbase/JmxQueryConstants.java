@@ -91,7 +91,7 @@ public class JmxQueryConstants {
 					numRegionServers,
 					numDeadRegionServers
 					});
-	public static final Map<String,Integer> PERFORMANCES_MAP = Maps.newHashMap();
+	//public static final Map<String,Integer> PERFORMANCES_MAP = Maps.newHashMap();
 	/*
 	static{
 	
@@ -99,7 +99,7 @@ public class JmxQueryConstants {
 			PERFORMANCES_MAP.put(PERFORMANCES_INDEX, MASTER_MONITOR_TYPE+StringUtils.leftPad(String.valueOf(PERFORMANCES_MAP.size()+1), 3,"0") );
 		}
 	}
-	*/
+	
 	public static synchronized Integer getMonitorTypeByItem(String item){
 		return PERFORMANCES_MAP.get(item);
 	}
