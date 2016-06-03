@@ -8,8 +8,8 @@ import java.util.List;
 
 import org.springframework.util.StringUtils;
 
+import com.bigdatafly.monitor.http.ProtocolConstants;
 import com.bigdatafly.monitor.messages.Message;
-import com.bigdatafly.monitor.messages.ProtocolConstants;
 import com.bigdatafly.monitor.serialization.Deserializer;
 
 /**

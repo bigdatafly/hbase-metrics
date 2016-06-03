@@ -27,7 +27,7 @@ public class ExcludeInterceptor extends DefaultInterceptor{
 		
 		if(attributes!=null){
 			Map<String,Object> body = msg.getBody();
-			body.keySet().retainAll(attributes);
+			body.keySet().removeAll(attributes);
 		}
 
 		return super.intercept(msg);

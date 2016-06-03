@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.bigdatafly.monitor.messages;
+package com.bigdatafly.monitor.http;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -23,6 +23,8 @@ public class ProtocolConstants {
 	 * body
 	 */
 	public static final String MODEL_TAG = "name";
+	public static final String SOURCE_TAG = "source";
+	public static final String RESOURCE_TAG = "resource";
 
 	//public static final String PROTOCOL_HEADER_PROJECT_NAME="projectName"; //目前就2种
 	public static final String PROTOCOL_HEADER_MODEL_NAME="modeName";

@@ -5,6 +5,7 @@ package com.bigdatafly.monitor.messages;
 
 import java.util.Map;
 
+import com.bigdatafly.monitor.http.ProtocolConstants;
 import com.bigdatafly.utils.DateUtils;
 import com.google.common.collect.Maps;
 

@@ -9,7 +9,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 import com.bigdatafly.monitor.configurations.HbaseMonitorConfiguration;
-import com.bigdatafly.monitor.messages.ProtocolConstants;
+import com.bigdatafly.monitor.http.ProtocolConstants;
 import com.google.common.collect.Maps;
 
 /**

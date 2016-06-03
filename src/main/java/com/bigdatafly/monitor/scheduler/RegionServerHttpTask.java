@@ -11,8 +11,8 @@ import org.springframework.util.StringUtils;
 
 import com.bigdatafly.monitor.exception.PageNotFoundException;
 import com.bigdatafly.monitor.http.HbaseJmxQuery;
+import com.bigdatafly.monitor.http.ProtocolConstants;
 import com.bigdatafly.monitor.messages.Message;
-import com.bigdatafly.monitor.messages.ProtocolConstants;
 import com.bigdatafly.monitor.serialization.Deserializer;
 
 /**

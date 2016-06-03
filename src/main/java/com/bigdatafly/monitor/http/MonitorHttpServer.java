@@ -126,8 +126,9 @@ public class MonitorHttpServer {
 	            	resMsg = "Stream Not Found";
 	            }else{
 	            	 String readStr = read(in);
-	            	 Collection<? extends Message> stringMsg = deserializer.deserialize("", "/storm/jsonData","", readStr);
-	 	    		 MessageQueue.addAll(stringMsg);
+	            	 Collection<? extends Message> stringMsg = deserializer.deserialize("storm", "storm","", readStr);
+	            	 for(Message msg:stringMsg)
+	            		 MessageQueue.offer(msg);
 	            }
 	    		
 	            httpExchange.sendResponseHeaders(200, resMsg.length());

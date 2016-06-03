@@ -23,15 +23,15 @@ import com.google.common.collect.Sets;
 public class MasterCallback extends DefaultCallback{
 
 	SchedulerManager parent;
-	ServerNodeOperator serverNodeOperator;
-	MonitorItemOperator monitoritemOperator;
+	//ServerNodeOperator serverNodeOperator;
+	//MonitorItemOperator monitoritemOperator;
 	/**
 	 * 
 	 */
 	public MasterCallback(SchedulerManager parent) {
 		this.parent = parent;
-		this.serverNodeOperator = parent.getServerNodeOperator();
-		this.monitoritemOperator = parent.getMonitorItemOperator();
+		//this.serverNodeOperator = parent.getServerNodeOperator();
+		//this.monitoritemOperator = parent.getMonitorItemOperator();
 	}
 
 	@Override
@@ -63,38 +63,38 @@ public class MasterCallback extends DefaultCallback{
 		
 	}
 	
-	protected void refreshRegionServer(Map<String,Object> beans){
-		
-		Set<String> newLiveRegionServers = Sets.newHashSet(MessageParser.getLiveRegionServerFromJmxMessage(beans));
-		
-		for(String serverName : newLiveRegionServers){
-			ServerNode node = new ServerNode();
-			node.setServerName(serverName);
-			node.setMonitorType(ServerNode.SLAVE_MONITOR_TYPE);
-			node.setOnline("1");
-			try {
-				serverNodeOperator.put(node);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		Set<String> newDeadRegionServers = Sets.newHashSet(MessageParser.getDeadRegionServerFromJmxMessage(beans));
-		
-		for(String serverName : newDeadRegionServers){
-			ServerNode node = new ServerNode();
-			node.setServerName(serverName);
-			node.setMonitorType(ServerNode.SLAVE_MONITOR_TYPE);
-			node.setOnline("0");
-			try {
-				serverNodeOperator.put(node);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
+//	protected void refreshRegionServer(Map<String,Object> beans){
+//		
+//		Set<String> newLiveRegionServers = Sets.newHashSet(MessageParser.getLiveRegionServerFromJmxMessage(beans));
+//		
+//		for(String serverName : newLiveRegionServers){
+//			ServerNode node = new ServerNode();
+//			node.setServerName(serverName);
+//			node.setMonitorType(ServerNode.SLAVE_MONITOR_TYPE);
+//			node.setOnline("1");
+//			try {
+//				serverNodeOperator.put(node);
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+//		
+//		Set<String> newDeadRegionServers = Sets.newHashSet(MessageParser.getDeadRegionServerFromJmxMessage(beans));
+//		
+//		for(String serverName : newDeadRegionServers){
+//			ServerNode node = new ServerNode();
+//			node.setServerName(serverName);
+//			node.setMonitorType(ServerNode.SLAVE_MONITOR_TYPE);
+//			node.setOnline("0");
+//			try {
+//				serverNodeOperator.put(node);
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+//	}
 
 	
 }

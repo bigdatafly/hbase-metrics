@@ -44,7 +44,7 @@ public abstract class AbstractConsumer<T extends Message> implements Consumer{
 		this.stop = false;
 		this.failDiscard = failDiscard;
 		//this.mq = mq;	
-		this.interceptors.add(createDefaultInterceptor());
+		//this.interceptors.add(createDefaultInterceptor());
 	}
 	
 	public void start(){
@@ -54,7 +54,7 @@ public abstract class AbstractConsumer<T extends Message> implements Consumer{
 				while(true){
 					if(stop || innerThread.isInterrupted())
 						break;
-					if(!MessageQueue.isEmpty()){
+					if(!MessageQueue.mq.isEmpty()){
 						synchronized(MessageQueue.mq){
 							Deque<Message> discardMessages = Lists.newLinkedList();
 							while(true){
@@ -117,7 +117,7 @@ public abstract class AbstractConsumer<T extends Message> implements Consumer{
 
 	public  void consumer(Message msg) throws HbaseMonitorException{
 		for(Interceptor interceptor:interceptors){
-			if(msg!=null)
+			if(interceptor!=null)
 				msg = interceptor.intercept(msg);
 		}
 	}
@@ -126,9 +126,10 @@ public abstract class AbstractConsumer<T extends Message> implements Consumer{
 	
 	protected Interceptor createDefaultInterceptor(){
 		Set<String> attributes = Sets.newHashSet();
-		attributes.addAll(JmxQueryConstants.MASTER_PERFORMANCES_INDEX);
-		attributes.addAll(JmxQueryConstants.REGION_SERVER_PERFORMANCES_INDEX);
-		return new IncludeInterceptor(attributes);
+		attributes.add("modelerType");
+		//attributes.addAll(JmxQueryConstants.MASTER_PERFORMANCES_INDEX);
+		//attributes.addAll(JmxQueryConstants.REGION_SERVER_PERFORMANCES_INDEX);
+		return new ExcludeInterceptor(attributes);
 	}
 	
 	protected  Map<String,Map<String,Object>> convert( T msg){
