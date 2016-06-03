@@ -73,6 +73,24 @@ public class HbaseMonitorConfiguration {
 		return conf.getInteger(ConfigurationConstants.ZOOKEEPER_PORT_KEY);
 	}
 	
+	/**
+	 * 
+	 * http server configuration
+	 */
+	
+	public int getHttpServerPort(){
+		return conf.getInteger(ConfigurationConstants.HTTP_SERVER_PORT_KEY,ConfigurationConstants.DEFAULT_HTTP_SERVER_PORT);
+	}
+	
+	
+	public int getHttpServerMaxRequestNum(){
+		return conf.getInteger(ConfigurationConstants.HTTP_MAX_REQUEST_NUM_KEY,ConfigurationConstants.DEFAULT_HTTP_MAX_REQUEST_NUM);
+	}
+	
+	public String getHttpServerContextPath(){
+		return conf.getString(ConfigurationConstants.HTTP_SERVER_REQ_PATH_KEY,ConfigurationConstants.DEFAULT_HTTP_SERVER_REQ_PATH);
+	}
+	
 	public Configuration getConfiguration() {
 		return conf;
 	}

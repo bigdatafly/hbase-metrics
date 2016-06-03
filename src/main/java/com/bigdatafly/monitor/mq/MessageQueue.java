@@ -3,6 +3,7 @@
  */
 package com.bigdatafly.monitor.mq;
 
+import java.util.Collection;
 import java.util.Deque;
 import java.util.LinkedList;
 
@@ -22,6 +23,10 @@ public class MessageQueue {
 	
 	public static synchronized void offer(Message msg){
 		mq.offer(msg);
+	}
+	
+	public static synchronized void addAll(Collection<? extends Message> msg){
+		mq.addAll(msg);
 	}
 	
 	public static synchronized int size(){

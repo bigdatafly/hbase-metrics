@@ -33,5 +33,20 @@ public class ConfigurationConstants {
 	
 	public static final String ZOOKEEPER_PORT_KEY = "hbase.zk.port";
 	
+	//#### http server
+	
+	public static final String HTTP_SERVER_PORT_KEY = "http.server.port";
+	
+	public static final int    DEFAULT_HTTP_SERVER_PORT = 7080;
+	
+	public static final String HTTP_MAX_REQUEST_NUM_KEY = "http.server.maxrequestnum";
+	
+	public static final int   DEFAULT_HTTP_MAX_REQUEST_NUM = 100;
+	
+	public static final String HTTP_SERVER_REQ_PATH_KEY ="http.server.reqpath";
+	
+	public static final String DEFAULT_HTTP_SERVER_REQ_PATH = "/metric";
+	
+	
 
 }
