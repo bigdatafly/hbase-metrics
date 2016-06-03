@@ -13,6 +13,8 @@ public class HbaseMonitorConfiguration {
 
 	Configuration conf;
 	
+	static HbaseMonitorConfiguration _self;
+	
 	private HbaseMonitorConfiguration(){
 		
 		File propertyFile = getPropteryFile();
@@ -101,7 +103,10 @@ public class HbaseMonitorConfiguration {
 		return "{configuration:"+this.conf.toString()+"]}";
 	}
 	
-	public static HbaseMonitorConfiguration builder(){
-		return new HbaseMonitorConfiguration();
+	public static synchronized HbaseMonitorConfiguration builder(){
+		
+		if(_self ==null)
+			_self = new HbaseMonitorConfiguration();
+		return _self;
 	}
 }

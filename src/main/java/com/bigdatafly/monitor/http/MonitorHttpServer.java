@@ -31,28 +31,31 @@ import com.sun.net.httpserver.spi.HttpServerProvider;
  * @author summer
  *
  */
-public class HttpMonitorServer {
+public class MonitorHttpServer {
 
-	private final static Logger logger = LoggerFactory.getLogger(HttpMonitorServer.class);
+	private final static Logger logger = LoggerFactory.getLogger(MonitorHttpServer.class);
 	
 	private int httpPort;
 	private int httpRequestNum;
 	private String requestPath;
-	private HbaseMonitorConfiguration conf;
 	HttpServer httpserver=null;
 	Deserializer deserializer;
-	private boolean started;
+	private volatile boolean started;
 	private static final String RESPONSE_MSG = "ok";   
 	
-	public HttpMonitorServer(HbaseMonitorConfiguration conf){
-		this.conf = conf;
-		this.httpPort = this.conf.getHttpServerPort();
-		this.httpRequestNum = this.conf.getHttpServerMaxRequestNum();
-		this.requestPath = this.conf.getHttpServerContextPath();
+	public MonitorHttpServer(){
+		this(HbaseMonitorConfiguration.builder());
+	}
+	
+	private MonitorHttpServer(HbaseMonitorConfiguration conf){
+		
+		this.httpPort = conf.getHttpServerPort();
+		this.httpRequestNum = conf.getHttpServerMaxRequestNum();
+		this.requestPath = conf.getHttpServerContextPath();
 		this.started = false;
 	}
 	
-	public void start() throws HbaseMonitorException{
+	public synchronized void start() throws HbaseMonitorException{
 		
 		if(started){
 			throw new HbaseMonitorException("http server already was started");
@@ -84,9 +87,25 @@ public class HttpMonitorServer {
 		}
 	}
 	
-	public void stop(){
-		if(started && httpserver !=null)
+	public synchronized void stop(){
+		if(httpserver !=null){
 			httpserver.stop(100);
+			
+		}
+		started = false;
+	}
+	
+	public synchronized void await(){
+		
+		while(started){
+			try {
+				Thread.sleep(1000*60);
+			} catch (InterruptedException e) {
+				
+				e.printStackTrace();
+				break;
+			}
+		}
 	}
 	
 	protected HttpServer createHttpserverService() throws IOException {
