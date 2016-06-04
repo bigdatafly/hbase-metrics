@@ -15,12 +15,12 @@ import com.bigdatafly.monitor.configurations.HbaseMonitorConfiguration;
  */
 public class HbaseMonitorConfigurationTest {
 
-	HbaseMonitorConfiguration conf = HbaseMonitorConfiguration.builder();
+	HbaseMonitorConfiguration conf = HbaseMonitorConfiguration.Builder.builder().create();
 	
 	@Test
 	public void configurationTest(){
 		
-		String expected = "h103";
+		String expected = "master";
 		String actual = conf.getMaster();
 		Assert.assertEquals(expected,actual);
 	}

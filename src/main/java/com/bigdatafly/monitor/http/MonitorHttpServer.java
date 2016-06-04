@@ -4,6 +4,7 @@
 package com.bigdatafly.monitor.http;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,6 +16,7 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bigdatafly.configurations.ConfigurationConstants;
 import com.bigdatafly.monitor.configurations.HbaseMonitorConfiguration;
 import com.bigdatafly.monitor.exception.HbaseMonitorException;
 import com.bigdatafly.monitor.messages.Message;
@@ -41,17 +43,42 @@ public class MonitorHttpServer {
 	HttpServer httpserver=null;
 	Deserializer deserializer;
 	private volatile boolean started;
-	private static final String RESPONSE_MSG = "ok";   
+	private static final String RESPONSE_MSG = "OK";   
 	
 	public MonitorHttpServer(){
-		this(HbaseMonitorConfiguration.builder());
+		this(ConfigurationConstants.DEFAULT_HTTP_SERVER_REQ_PATH);
 	}
 	
-	private MonitorHttpServer(HbaseMonitorConfiguration conf){
+	public MonitorHttpServer(File propertyFile){
+		this(HbaseMonitorConfiguration.Builder.newSingletonConfiguration(propertyFile));
+	}
+	
+	public MonitorHttpServer(String requestPath){
+		this(ConfigurationConstants.DEFAULT_HTTP_SERVER_PORT,requestPath);
+	}
+	
+	public MonitorHttpServer(int httpPort,String requestPath){
+		this(httpPort,requestPath,ConfigurationConstants.DEFAULT_HTTP_MAX_REQUEST_NUM);
+	}
+	
+	public MonitorHttpServer(HbaseMonitorConfiguration conf){
 		
-		this.httpPort = conf.getHttpServerPort();
-		this.httpRequestNum = conf.getHttpServerMaxRequestNum();
-		this.requestPath = conf.getHttpServerContextPath();
+		this(conf.getHttpServerPort(),
+				conf.getHttpServerContextPath(),
+				conf.getHttpServerMaxRequestNum());
+		
+	}
+	/**
+	 * 
+	 * @param httpPort httpserver port 
+	 * @param requestPath httpserver context request path
+	 * @param maxReqNum max request num
+	 */
+	public MonitorHttpServer(int httpPort,String requestPath,int maxReqNum){
+		
+		this.httpPort = (httpPort <23)?ConfigurationConstants.DEFAULT_HTTP_SERVER_PORT:httpPort;
+		this.httpRequestNum = maxReqNum;
+		this.requestPath = requestPath;
 		this.started = false;
 	}
 	

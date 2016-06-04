@@ -12,4 +12,5 @@ import com.bigdatafly.monitor.messages.Message;
 public interface Interceptor {
 
 	public Message intercept(Message msg);
+	
 }

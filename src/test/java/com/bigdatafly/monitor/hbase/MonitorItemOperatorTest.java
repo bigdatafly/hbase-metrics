@@ -20,7 +20,7 @@ public class MonitorItemOperatorTest {
 	
 	@Before
 	public void initialize(){
-		conf = HbaseMonitorConfiguration.builder();
+		conf = HbaseMonitorConfiguration.Builder.builder().create();
 		hbaseOperator = new MonitorItemOperator(conf);
 	}
 	

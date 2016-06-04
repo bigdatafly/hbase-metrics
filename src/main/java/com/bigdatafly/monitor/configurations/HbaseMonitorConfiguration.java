@@ -3,6 +3,8 @@ package com.bigdatafly.monitor.configurations;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.bigdatafly.configurations.Configuration;
 import com.bigdatafly.configurations.ConfigurationConstants;
@@ -13,11 +15,9 @@ public class HbaseMonitorConfiguration {
 
 	Configuration conf;
 	
-	static HbaseMonitorConfiguration _self;
-	
-	private HbaseMonitorConfiguration(){
+	private HbaseMonitorConfiguration(File propertyFile){
 		
-		File propertyFile = getPropteryFile();
+		//File propertyFile = getPropteryFile();
 		ConfigurationProvider configurationProvider = new PropertiesFileConfigurationProvider(propertyFile);
 		conf = configurationProvider.getConfiguration();
 	}
@@ -27,16 +27,6 @@ public class HbaseMonitorConfiguration {
 		return conf.getString(ConfigurationConstants.MASTER_KEY);
 	}
 
-	private File getPropteryFile(){
-		
-		String filePath = this.getClass().getResource("/").getFile() ;
-		try {
-			filePath = URLDecoder.decode(filePath,"utf-8");
-		} catch (UnsupportedEncodingException e) {
-			
-		}
-		return new File(filePath,ConfigurationConstants.PROPERTY_FILE);
-	}
 	
 	public Integer getFrequency(){
 		
@@ -103,10 +93,56 @@ public class HbaseMonitorConfiguration {
 		return "{configuration:"+this.conf.toString()+"]}";
 	}
 	
-	public static synchronized HbaseMonitorConfiguration builder(){
+	public static class Builder{
+		private File propertyFile;
+		static HbaseMonitorConfiguration _self = null;
+		static Lock lock = new ReentrantLock();
 		
-		if(_self ==null)
-			_self = new HbaseMonitorConfiguration();
-		return _self;
+		private Builder(){
+			
+		}
+		
+		public static Builder builder(){
+			return new Builder();
+		}
+		public Builder setPropertyFile(File propertyFile){
+			this.propertyFile = propertyFile;
+			return this;
+		}
+		
+		public static HbaseMonitorConfiguration newSingletonConfiguration(final File propertyFile){
+			
+			if(_self == null){
+				lock.lock();
+				try{
+					if(_self == null)
+						_self = new HbaseMonitorConfiguration(propertyFile);				
+				}finally{
+					lock.unlock();
+				}
+			}
+			
+			return _self;
+		}
+		
+		public  HbaseMonitorConfiguration create(){
+			
+			if(propertyFile ==null)
+				propertyFile =  getPropteryFile();
+			return new HbaseMonitorConfiguration(propertyFile);
+		}
+		
+		private File getPropteryFile(){
+			
+			String filePath = this.getClass().getResource("/").getFile() ;
+			try {
+				filePath = URLDecoder.decode(filePath,"utf-8");
+			} catch (UnsupportedEncodingException e) {
+				
+			}
+			return new File(filePath,ConfigurationConstants.PROPERTY_FILE);
+		}
+		
 	}
+	
 }

@@ -3,6 +3,8 @@
  */
 package com.bigdatafly.monitor.scheduler;
 
+import java.util.List;
+
 import com.bigdatafly.monitor.messages.Message;
 
 /**
@@ -11,5 +13,9 @@ import com.bigdatafly.monitor.messages.Message;
  */
 public interface Handler {
 
-	public <T extends Message> void handler(T msg);
+	public void handler(Message message);
+	
+	public Handler setInterceptors(List<Interceptor> interceptors);
+	
+	public Handler addInterceptor(Interceptor interceptor);
 }

@@ -19,7 +19,7 @@ public class ServerNodeOperatorTest {
 	HbaseMonitorConfiguration conf; 
 	@Before
 	public void initialize(){
-		conf = HbaseMonitorConfiguration.builder();
+		conf = HbaseMonitorConfiguration.Builder.builder().create();
 		hbaseOperator = new ServerNodeOperator(conf);
 	}
 	

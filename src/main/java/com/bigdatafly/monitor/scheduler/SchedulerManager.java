@@ -3,6 +3,7 @@
  */
 package com.bigdatafly.monitor.scheduler;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -71,9 +72,9 @@ public class SchedulerManager {
 				.setServers(regionServerList)
 				.setSerializer(new StringDeserializer())
 				.setInterval(requency)
-				.setHandler(new Handler(){
+				.setHandler(new AbstractHandler(){
 					@Override
-					public <T extends Message> void handler(T msg) {
+					public void doHandler(Message msg) {
 						if(msg instanceof StringMessage){
 							StringMessage stringMsg = (StringMessage)msg;
 							MessageQueue.offer(stringMsg);
@@ -112,9 +113,9 @@ public class SchedulerManager {
 				.setServers(regionServerList)
 				.setSerializer(new StringDeserializer())
 				.setInterval(requency)
-				.setHandler(new Handler(){
+				.setHandler(new AbstractHandler(){
 					@Override
-					public <T extends Message> void handler(T msg) {
+					public void doHandler(Message msg) {
 						if(msg instanceof StringMessage){
 							StringMessage stringMsg = (StringMessage)msg;
 							stringMsg.setSource(master);
@@ -148,10 +149,14 @@ public class SchedulerManager {
 	
 	public SchedulerManager(){
 		
-		this(HbaseMonitorConfiguration.builder());
+		this(HbaseMonitorConfiguration.Builder.builder().create());
 	}
 	
-	protected SchedulerManager(HbaseMonitorConfiguration config){
+	public SchedulerManager(File configFile){
+		this(HbaseMonitorConfiguration.Builder.newSingletonConfiguration(configFile));
+	}
+	
+	public SchedulerManager(HbaseMonitorConfiguration config){
 		
 		this.config = config;
 		this.hbaseJmxQuery =   HbaseJmxQuery.Builder

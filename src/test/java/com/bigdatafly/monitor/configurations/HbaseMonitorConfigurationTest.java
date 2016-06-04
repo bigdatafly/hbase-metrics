@@ -13,7 +13,7 @@ import com.bigdatafly.configurations.Configuration;
  */
 public class HbaseMonitorConfigurationTest {
 
-	HbaseMonitorConfiguration config = HbaseMonitorConfiguration.builder();
+	HbaseMonitorConfiguration config = HbaseMonitorConfiguration.Builder.builder().create();
 	@Test
 	public void hbaseMonitorConfigurationTest(){
 		
