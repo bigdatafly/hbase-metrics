@@ -1,8 +1,7 @@
 package com.bigdatafly.monitor.configurations;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -63,6 +62,15 @@ public class HbaseMonitorConfiguration {
 	
 	public int getHbaseZookeeperPort(){
 		return conf.getInteger(ConfigurationConstants.ZOOKEEPER_PORT_KEY);
+	}
+	
+	
+	public Set<String> getMonitorIncludeAttributes(){
+		return conf.getMonitorAttributes(ConfigurationConstants.MONITOR_INCLUDE_ATTRIBUTES_PREFIX);
+	}
+	
+	public Set<String> getMonitorExcludeAttributes(){
+		return conf.getMonitorAttributes(ConfigurationConstants.MONITOR_EXCLUDE_ATTRIBUTES_PREFIX);
 	}
 	
 	/**
@@ -135,11 +143,6 @@ public class HbaseMonitorConfiguration {
 		private File getPropteryFile(){
 			
 			String filePath = this.getClass().getResource("/").getFile() ;
-			try {
-				filePath = URLDecoder.decode(filePath,"utf-8");
-			} catch (UnsupportedEncodingException e) {
-				
-			}
 			return new File(filePath,ConfigurationConstants.PROPERTY_FILE);
 		}
 		

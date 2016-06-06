@@ -1,8 +1,10 @@
 package com.bigdatafly.configurations;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.storm.shade.com.google.common.collect.Sets;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -41,5 +43,18 @@ public class Configuration {
 
 	public String toString(){
 		return String.valueOf(this.properties);
+	}
+
+	public Set<String> getMonitorAttributes(
+			String monitorAttributesPrefix) {
+
+		Set<String> attributes = Sets.newHashSet();
+		for(Map.Entry<String,String> e : this.properties.entrySet()){
+			String key = e.getKey();
+			if(StringUtils.isEmpty(key) && 
+					key.startsWith(monitorAttributesPrefix))
+				attributes.add(e.getValue());
+		}
+		return attributes;
 	}
 }

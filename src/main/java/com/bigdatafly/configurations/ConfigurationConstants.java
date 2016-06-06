@@ -47,6 +47,10 @@ public class ConfigurationConstants {
 	
 	public static final String DEFAULT_HTTP_SERVER_REQ_PATH = "/metric";
 	
+	public static final String MONITOR_INCLUDE_ATTRIBUTES_PREFIX = "monitor.include.attr";
+	
+	public static final String MONITOR_EXCLUDE_ATTRIBUTES_PREFIX = "monitor.exclude.attr";
+	
 	
 
 }

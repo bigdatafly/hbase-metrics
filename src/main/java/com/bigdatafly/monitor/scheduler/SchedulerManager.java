@@ -46,7 +46,7 @@ public class SchedulerManager {
 	private ServerNodeOperator serverNodeOperator;
 	private MonitorItemOperator monitorItemOperator;
 	private Consumer messageConsumer;
-	//public static final Map<String,String> MONITOR_ITEM_MAP = Maps.newHashMap();
+	
 	
 	public void start() throws HbaseMonitorException{
 		
@@ -78,29 +78,11 @@ public class SchedulerManager {
 						if(msg instanceof StringMessage){
 							StringMessage stringMsg = (StringMessage)msg;
 							MessageQueue.offer(stringMsg);
-						}
-						/*
-						if(msg instanceof StringMessage){
-							StringMessage stringMsg = (StringMessage)msg;
-							String serverName = stringMsg.getResource();
-							String body = stringMsg.getBody();
-							Beans beans = MessageParser.jmxMessageParse(body);
-							Map<String,Object> performancesIndex = MessageParser.getParamters(beans, JmxQueryConstants.REGION_SERVER_PERFORMANCES_INDEX);
-							try {
-								hbaseOperator.put(serverName,performancesIndex);
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							if(logger.isDebugEnabled()){
-								System.out.println("--------------regionserver("+serverName+") begin---------------------");
-								System.out.println(body);
-								System.out.println("--------------regionserver("+serverName+") end------------------------");
-								logger.debug(stringMsg.toString());
-							}
-						}*/						
+						}					
 					}					
-				})
+				}
+				.addInterceptor(new ExcludeInterceptor(config.getMonitorExcludeAttributes()))
+				.addInterceptor(new IncludeInterceptor(config.getMonitorIncludeAttributes())))
 				.create();
 		return task;
 	}
@@ -120,29 +102,11 @@ public class SchedulerManager {
 							StringMessage stringMsg = (StringMessage)msg;
 							stringMsg.setSource(master);
 							MessageQueue.offer(stringMsg);
-						}
-						/*
-						if(msg instanceof StringMessage){
-							StringMessage stringMsg = (StringMessage)msg;
-							String body = stringMsg.getBody();
-							Beans beans = MessageParser.jmxMessageParse(body);
-							Map<String,Object> performancesIndex = MessageParser.getParamters(beans, JmxQueryConstants.MASTER_PERFORMANCES_INDEX);
-							try {
-								hbaseOperator.put(master,performancesIndex);
-								//serverNodeOperator.put(master, node);
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							if(logger.isDebugEnabled()){
-								System.out.println("--------------master begin---------------------");
-								System.out.println(body);
-								System.out.println("--------------master end------------------------");
-								logger.debug(stringMsg.toString());
-							}
-						}*/						
+						}					
 					}					
-				})
+				}
+				.addInterceptor(new ExcludeInterceptor(config.getMonitorExcludeAttributes()))
+				.addInterceptor(new IncludeInterceptor(config.getMonitorIncludeAttributes())))
 				.create();
 		return task;
 	}
